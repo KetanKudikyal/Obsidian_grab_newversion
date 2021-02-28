@@ -1,16 +1,18 @@
 import * as React from "react";
-import { useState, useEffect , useRef } from "react";
-import { getting_workflows } from "../../background_script";
+import { useState, useEffect, useRef } from "react";
+// import { getting_workflows } from "../../background_script";
 import WorkflowPage from "./Workflow";
 import { auth } from "../../background_script/firebase";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import NoWorkFlow from "./NoWorkFlow";
 
 const MainPage = () => {
   const [userdata, setuserdata] = useState<[]>([]);
   const [Workflow, setWorkflow] = useState<boolean>(false);
-  const [repoNames, setrepoNames] = useState<string[]>([]);
-  
+  const [repoNames, setrepoNames] = useState<[]>([]);
+  const [WorkflowStatus, setWorkflowStatus] = useState<boolean>(true);
+
   async function fetchdata() {
     const token = localStorage.getItem("accesstoken");
     console.log("ABye", token);
@@ -24,35 +26,57 @@ const MainPage = () => {
     const Repos = data.map((reponame: any) => {
       return reponame.full_name;
     });
-    setrepoNames(Repos);
-    setuserdata(...userdata, data);
+    setrepoNames(...repoNames, Repos);
   }
-
-  console.log("UseState", repoNames);
 
   React.useEffect(() => {
     fetchdata();
   }, []);
 
-  const workflows = (name: string) => {
-    setWorkflow(true);
-    console.log(Workflow);
-    console.log("workflows", name);
-    getting_workflows(name);
+  const getting_workflows = async (name: string) => {
+    const token = localStorage.getItem("accesstoken");
+    console.log("getting_Workflow", name);
+
+    const req = await fetch(
+      `https://api.github.com/repos/${name}/actions/workflows?type=owner`,
+      {
+        headers: {
+          Accept: "application/vnd.github.v3+json",
+          Authorization: `token ${token}`,
+        },
+      }
+    );
+    const data = await req.json();
+    if (data.workflows.length == 0) {
+      setWorkflowStatus(false);
+      setWorkflow(true);
+    } else {
+      setWorkflow(true)
+    }
   };
 
-  const valueRef = useRef('') //creating a refernce for TextField Component
+  // const workflows = (name: string) => {
+  //   setWorkflow(true);
+  //   console.log(Workflow);
+  //   console.log("workflows", name);
+  //   getting_workflows(name);
+  // };
+
+  const valueRef = useRef(""); //creating a refernce for TextField Component
 
   const sendValue = () => {
-    const name = valueRef.current.value
-    workflows(name)
-    console.log(valueRef.current.value) //on clicking button accesing current value of TextField and outputing it to console 
-    }
+    const name = valueRef.current.value;
+    getting_workflows(name);
+    console.log(valueRef.current.value); //on clicking button accesing current value of TextField and outputing it to console
+  };
 
   return (
     <div>
       {Workflow ? (
-        <WorkflowPage />
+       
+          ( WorkflowStatus ? (<WorkflowPage />) : (<NoWorkFlow />
+          ))
+      
       ) : (
         <div>
           <button onClick={() => auth.signOut()}>logout</button>
@@ -65,15 +89,24 @@ const MainPage = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
-               inputRef={valueRef}
+                inputRef={valueRef}
                 label="Combo box"
                 variant="outlined"
               />
             )}
             fullWidth
-            />
-            <button onClick={sendValue}>Send </button>
-          {/* {repoNames.map(function (value: any) {
+          />
+          <button onClick={sendValue}>Send </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MainPage;
+
+{
+  /* {repoNames.map(function (value: any) {
             const name = value;
             console.log(name);
             
@@ -85,15 +118,8 @@ const MainPage = () => {
                 </li>
               </div>
             );
-          })} */}
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default MainPage;
-
+          })} */
+}
 // onClick={(e) => {
 //   e.preventDefault();
 // localStorage.setItem("repoName", name);
