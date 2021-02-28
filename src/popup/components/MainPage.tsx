@@ -7,7 +7,7 @@ import { auth } from "../../background_script/firebase";
 const MainPage = () => {
   const [userdata, setuserdata] = useState<[]>([]);
   const [Workflow, setWorkflow] = useState<boolean>(false);
-
+  const [repoNames, setrepoNames] = useState<string[]>([]);
   async function fetchdata() {
     const token = localStorage.getItem("accesstoken");
     console.log("ABye", token);
@@ -18,10 +18,22 @@ const MainPage = () => {
       },
     });
     const data = await req.json();
-    console.log(data);
+    // console.log(data.map((reponame: any) => {
+    //   // const Repos = []
+    //   // const Rname = Repos.push(reponame.full_name)
+    //   console.log(reponame.full_name);
+    //   // setrepoName(Repos)
+    // }));
+    const Repos = data.map((reponame: any) => {
+      return reponame.full_name
+    })
+    // console.log(Repos);
+    setrepoNames(Repos)
     setuserdata(...userdata, data);
   }
 
+  console.log("UseState" , repoNames);
+  
   React.useEffect(() => {
     fetchdata();
   }, []);
@@ -43,6 +55,7 @@ const MainPage = () => {
           <h1>Select the repo</h1>
           {userdata.map(function (value: any) {
             const name = value.full_name;
+            // console.log(name);
             localStorage.setItem("repoName", name);
             return (
               <div>
