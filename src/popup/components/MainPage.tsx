@@ -1,15 +1,16 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect , useRef } from "react";
 import { getting_workflows } from "../../background_script";
 import WorkflowPage from "./Workflow";
 import { auth } from "../../background_script/firebase";
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const MainPage = () => {
   const [userdata, setuserdata] = useState<[]>([]);
   const [Workflow, setWorkflow] = useState<boolean>(false);
   const [repoNames, setrepoNames] = useState<string[]>([]);
+  
   async function fetchdata() {
     const token = localStorage.getItem("accesstoken");
     console.log("ABye", token);
@@ -21,40 +22,57 @@ const MainPage = () => {
     });
     const data = await req.json();
     const Repos = data.map((reponame: any) => {
-      return reponame.full_name
-    })
-    setrepoNames(Repos)
+      return reponame.full_name;
+    });
+    setrepoNames(Repos);
     setuserdata(...userdata, data);
   }
 
-  console.log("UseState" , repoNames);
-  
+  console.log("UseState", repoNames);
+
   React.useEffect(() => {
     fetchdata();
   }, []);
 
-  const workflows = (name:string) => {
+  const workflows = (name: string) => {
     setWorkflow(true);
     console.log(Workflow);
-    console.log("workflows" , name)
+    console.log("workflows", name);
     getting_workflows(name);
   };
+
+  const valueRef = useRef('') //creating a refernce for TextField Component
+
+  const sendValue = () => {
+    const name = valueRef.current.value
+    workflows(name)
+    console.log(valueRef.current.value) //on clicking button accesing current value of TextField and outputing it to console 
+    }
 
   return (
     <div>
       {Workflow ? (
         <WorkflowPage />
       ) : (
-          <div>
-            <button onClick={() => auth.signOut()}>logout</button>
-            <h1>Select the repo</h1>
-            <Autocomplete
+        <div>
+          <button onClick={() => auth.signOut()}>logout</button>
+          <h1>Select the repo</h1>
+          <Autocomplete
             id="combo-box-demo"
             options={repoNames}
-            getOptionLabel={(option:string) => option}
-            style={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Combo box" onClick={() => console.log(params)} variant="outlined" />}
-    />
+            getOptionLabel={(option: string) => option}
+            // style={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+               inputRef={valueRef}
+                label="Combo box"
+                variant="outlined"
+              />
+            )}
+            fullWidth
+            />
+            <button onClick={sendValue}>Send </button>
           {/* {repoNames.map(function (value: any) {
             const name = value;
             console.log(name);
@@ -84,42 +102,6 @@ export default MainPage;
 //   // getting_workflows()
 //   setWorkflow(true);
 // }}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import * as React from "react";
 // import { auth, signoutfromgithub ,getgithubdata  } from "../../background_script";
