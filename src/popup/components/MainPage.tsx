@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { getting_workflows } from "../../background_script";
 import WorkflowPage from "./Workflow";
 import { auth } from "../../background_script/firebase";
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const MainPage = () => {
   const [userdata, setuserdata] = useState<[]>([]);
@@ -18,16 +20,9 @@ const MainPage = () => {
       },
     });
     const data = await req.json();
-    // console.log(data.map((reponame: any) => {
-    //   // const Repos = []
-    //   // const Rname = Repos.push(reponame.full_name)
-    //   console.log(reponame.full_name);
-    //   // setrepoName(Repos)
-    // }));
     const Repos = data.map((reponame: any) => {
       return reponame.full_name
     })
-    // console.log(Repos);
     setrepoNames(Repos)
     setuserdata(...userdata, data);
   }
@@ -52,10 +47,18 @@ const MainPage = () => {
       ) : (
           <div>
             <button onClick={() => auth.signOut()}>logout</button>
-          <h1>Select the repo</h1>
-          {userdata.map(function (value: any) {
-            const name = value.full_name;
-            // console.log(name);
+            <h1>Select the repo</h1>
+            <Autocomplete
+            id="combo-box-demo"
+            options={repoNames}
+            getOptionLabel={(option:string) => option}
+            style={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Combo box" onClick={() => console.log(params)} variant="outlined" />}
+    />
+          {/* {repoNames.map(function (value: any) {
+            const name = value;
+            console.log(name);
+            
             localStorage.setItem("repoName", name);
             return (
               <div>
@@ -64,7 +67,7 @@ const MainPage = () => {
                 </li>
               </div>
             );
-          })}
+          })} */}
         </div>
       )}
     </div>
