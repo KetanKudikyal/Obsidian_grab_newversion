@@ -3,6 +3,8 @@ import { Button, Card, Divider, makeStyles } from "@material-ui/core";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import { provider, auth } from "../../background_script/firebase";
 import firebase from "firebase";
+// const appStyles = require("../App.css");
+const logo = require("../../../public/icon.png");
 
 const signInwithGithub = () => {
   auth.signInWithPopup(provider).then((result) => {
@@ -10,11 +12,7 @@ const signInwithGithub = () => {
     var user = result.user;
     console.log(user);
     var token: string = Credential.accessToken || "";
-    // chrome.storage.sync.set({key: token}, function() {
-    //   console.log('token is set to ' + token);
-    // });
     localStorage.setItem("accesstoken", token);
-    // console.log(token);
   });
 };
 
@@ -37,7 +35,21 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1.5),
   },
   card: {
+    marginTop: "50px",
     minWidth: 275,
+  },
+  appHeader: {
+    backgroundColor: "#222",
+    height: "120px",
+    padding: "20px",
+    color: "#fff",
+  },
+  appLogo: {
+    /* animation: appLogoSpin infinite 20s linear; */
+    height: "50px",
+  },
+  app: {
+    textAlign: "center",
   },
 }));
 
@@ -46,6 +58,13 @@ const LoginPage = () => {
 
   return (
     <div>
+      <div className={classes.app}>
+        <div className={classes.appHeader}>
+          <h1>Obsidian Grab</h1>
+          <GitHubIcon style={{ fontSize: 60 }} />
+          {/* <img src="https://img.icons8.com/material-sharp/48/000000/github.png" className={classes.appLogo} alt="logo" /> */}
+        </div>
+      </div>
       <div
         style={{
           display: "flex",
@@ -53,7 +72,7 @@ const LoginPage = () => {
           placeItems: "center",
         }}
       >
-        <GitHubIcon style={{ fontSize: 60 }} />
+        {/* <GitHubIcon style={{ fontSize: 60 }} /> */}
         <Card elevation={5} className={classes.card}>
           <Button
             fullWidth
@@ -66,7 +85,7 @@ const LoginPage = () => {
               className={classes.image}
               src="https://img.icons8.com/material-sharp/48/000000/github.png"
             />
-            <span>Login with Google &nbsp;&nbsp;&nbsp;</span>
+            <span>Login with Github &nbsp;&nbsp;&nbsp;</span>
           </Button>
         </Card>
       </div>

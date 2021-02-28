@@ -12,12 +12,12 @@ export const getting_workflows = async (name: string) => {
     }
   );
   const data = await req.json();
-  console.log(data.workflows[0].id)
+  // console.log(data.workflows[0].id)
   if (data.workflows.length == 0) {
     console.log("Github Workflow not found");
-    
   } else {
     console.log(data.workflows)
+    console.log(data.workflows[0].id)
   }
 };
 

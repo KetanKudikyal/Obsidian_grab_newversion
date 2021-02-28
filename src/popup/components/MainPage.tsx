@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { getting_workflows } from "../../background_script";
 import WorkflowPage from "./Workflow";
+import { auth } from "../../background_script/firebase";
 
 const MainPage = () => {
   const [userdata, setuserdata] = useState<[]>([]);
@@ -37,7 +38,8 @@ const MainPage = () => {
       {Workflow ? (
         <WorkflowPage />
       ) : (
-        <div>
+          <div>
+            <button onClick={() => auth.signOut()}>logout</button>
           <h1>Select the repo</h1>
           {userdata.map(function (value: any) {
             const name = value.full_name;

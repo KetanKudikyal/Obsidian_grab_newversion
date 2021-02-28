@@ -5,6 +5,7 @@ import { auth, provider } from "../background_script/firebase";
 import LoginPage from "./components/LoginPage";
 import MainPage from "./components/MainPage";
 
+
 const App = () => {
   const [currentUser, setcurrentUser] = React.useState<any>(null);
 
