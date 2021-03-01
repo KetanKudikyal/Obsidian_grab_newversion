@@ -2,16 +2,53 @@ import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 // import { getting_workflows } from "../../background_script";
 import WorkflowPage from "./Workflow";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { auth } from "../../background_script/firebase";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import NoWorkFlow from "./NoWorkFlow";
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+
+const useStyles = makeStyles({
+  root: {
+    border: 0,
+    height: 48,
+    // padding: '0 30px',
+  },
+  button: {
+    display: "block",
+    top:"70px",
+    marginLeft:" auto",
+    marginRight: "auto",
+    width: "20%",
+    padding: "10px",
+    background:"black"
+  },
+  logout: {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    cursor:"pointer"
+  },
+  font: {
+    fontFamily: "Roboto"
+  },
+  page: {
+    border:0,
+    height: 48,
+    padding: '0 30px',
+  }
+})
 
 const MainPage = () => {
-  const [userdata, setuserdata] = useState<[]>([]);
+  const classes = useStyles();
+  // const [userdata, setuserdata] = useState<[]>([]);
   const [Workflow, setWorkflow] = useState<boolean>(false);
   const [repoNames, setrepoNames] = useState<[]>([]);
   const [WorkflowStatus, setWorkflowStatus] = useState<boolean>(true);
+
+  
 
   async function fetchdata() {
     const token = localStorage.getItem("accesstoken");
@@ -71,32 +108,31 @@ const MainPage = () => {
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       {Workflow ? (
        
           ( WorkflowStatus ? (<WorkflowPage />) : (<NoWorkFlow />
           ))
       
       ) : (
-        <div>
-          <button onClick={() => auth.signOut()}>logout</button>
-          <h1>Select the repo</h1>
+        <div className={classes.page}>
+          <ExitToAppIcon className={classes.logout} onClick={() => auth.signOut()}>logout</ExitToAppIcon>
+          <h1 className={classes.font}>Select the repo</h1>
           <Autocomplete
             id="combo-box-demo"
             options={repoNames}
             getOptionLabel={(option: string) => option}
-            // style={{ width: 300 }}
             renderInput={(params) => (
               <TextField
                 {...params}
                 inputRef={valueRef}
-                label="Combo box"
+                label="Repos"
                 variant="outlined"
               />
             )}
             fullWidth
           />
-          <button onClick={sendValue}>Send </button>
+          <Button variant="contained" className={classes.button} color="secondary" onClick={sendValue}>Send </Button>
         </div>
       )}
     </div>
