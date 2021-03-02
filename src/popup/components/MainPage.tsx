@@ -2,13 +2,13 @@ import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 // import { getting_workflows } from "../../background_script";
 import WorkflowPage from "./Workflow";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { auth } from "../../background_script/firebase";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import NoWorkFlow from "./NoWorkFlow";
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles({
   root: {
@@ -18,28 +18,28 @@ const useStyles = makeStyles({
   },
   button: {
     display: "block",
-    top:"70px",
-    marginLeft:" auto",
+    top: "70px",
+    marginLeft: " auto",
     marginRight: "auto",
     width: "20%",
     padding: "10px",
-    background:"black"
+    background: "black",
   },
   logout: {
     position: "absolute",
     top: "10px",
     right: "10px",
-    cursor:"pointer"
+    cursor: "pointer",
   },
   font: {
-    fontFamily: "Roboto"
+    fontFamily: "Roboto",
   },
   page: {
-    border:0,
+    border: 0,
     height: 48,
-    padding: '0 30px',
-  }
-})
+    padding: "0 30px",
+  },
+});
 
 const MainPage = () => {
   const classes = useStyles();
@@ -47,8 +47,7 @@ const MainPage = () => {
   const [Workflow, setWorkflow] = useState<boolean>(false);
   const [repoNames, setrepoNames] = useState<[]>([]);
   const [WorkflowStatus, setWorkflowStatus] = useState<boolean>(true);
-
-  
+  const [WorkflowList, setWorkflowList] = useState<[]>([]);
 
   async function fetchdata() {
     const token = localStorage.getItem("accesstoken");
@@ -84,20 +83,22 @@ const MainPage = () => {
       }
     );
     const data = await req.json();
+    const workflow = data.workflows.map((workflow: any) => {
+      const name = workflow.name;
+      const id = workflow.id;
+      return { name, id };
+    });
+    setWorkflowList(workflow);
+    console.log(workflow);
     if (data.workflows.length == 0) {
       setWorkflowStatus(false);
       setWorkflow(true);
     } else {
-      setWorkflow(true)
+      setWorkflow(true);
     }
   };
 
-  // const workflows = (name: string) => {
-  //   setWorkflow(true);
-  //   console.log(Workflow);
-  //   console.log("workflows", name);
-  //   getting_workflows(name);
-  // };
+  console.log(WorkflowList);
 
   const valueRef = useRef(""); //creating a refernce for TextField Component
 
@@ -110,13 +111,19 @@ const MainPage = () => {
   return (
     <div className={classes.root}>
       {Workflow ? (
-       
-          ( WorkflowStatus ? (<WorkflowPage />) : (<NoWorkFlow />
-          ))
-      
+        WorkflowStatus ? (
+          <WorkflowPage workflows={WorkflowList} />
+        ) : (
+          <NoWorkFlow />
+        )
       ) : (
         <div className={classes.page}>
-          <ExitToAppIcon className={classes.logout} onClick={() => auth.signOut()}>logout</ExitToAppIcon>
+          <ExitToAppIcon
+            className={classes.logout}
+            onClick={() => auth.signOut()}
+          >
+            logout
+          </ExitToAppIcon>
           <h1 className={classes.font}>Select the repo</h1>
           <Autocomplete
             id="combo-box-demo"
@@ -132,7 +139,14 @@ const MainPage = () => {
             )}
             fullWidth
           />
-          <Button variant="contained" className={classes.button} color="secondary" onClick={sendValue}>Send </Button>
+          <Button
+            variant="contained"
+            className={classes.button}
+            color="secondary"
+            onClick={sendValue}
+          >
+            Send{" "}
+          </Button>
         </div>
       )}
     </div>
@@ -140,57 +154,3 @@ const MainPage = () => {
 };
 
 export default MainPage;
-
-{
-  /* {repoNames.map(function (value: any) {
-            const name = value;
-            console.log(name);
-            
-            localStorage.setItem("repoName", name);
-            return (
-              <div>
-                <li>
-                  <button onClick={() => workflows(name)}>{name}</button>
-                </li>
-              </div>
-            );
-          })} */
-}
-// onClick={(e) => {
-//   e.preventDefault();
-// localStorage.setItem("repoName", name);
-//   // console.log(localStorage.getItem("repoName"));
-//   // <Workflow/>
-//   // getting_workflows()
-//   setWorkflow(true);
-// }}
-
-// import * as React from "react";
-// import { auth, signoutfromgithub ,getgithubdata  } from "../../background_script";
-// import { makeStyles } from "@material-ui/core/styles";
-// import Avatar from "@material-ui/core/Avatar";
-
-// const useStyles = makeStyles((theme) => ({
-//   root: {
-//     display: "flex",
-//     "& > *": {
-//       margin: theme.spacing(1),
-//     },
-//   },
-// }));
-
-// const MainPage = (props: any) => {
-//   const classes = useStyles();
-//   const { currentUser } = props;
-//   return (
-//     <div>
-//       <div className={classes.root}>
-//         <Avatar alt="Remy Sharp" src="https://avatars.githubusercontent.com/u/66976099?s=60&v=4" />
-//       </div>
-//       <button onClick={signoutfromgithub}>Logout</button>
-//       <button onClick={getgithubdata }>getrepos</button>
-//     </div>
-//   );
-// };
-
-// export default MainPage;
