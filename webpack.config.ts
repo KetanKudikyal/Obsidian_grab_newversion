@@ -22,6 +22,7 @@ const buildConfig: webpack.Configuration = {
   module: {
     rules: [
       // compile ts
+      { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
       {
         exclude: /node_modules/,
         loader: "ts-loader",
