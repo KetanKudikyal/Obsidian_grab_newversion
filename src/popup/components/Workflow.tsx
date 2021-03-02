@@ -41,30 +41,49 @@ const Workflow = () => {
     setFormState("loading");
     console.log("handleSubmit:", textValue);
   };
+  const resetForm = () => {
+    setTextValue("");
+    setFormState("idle");
+  };
+
   return (
     <div>
-      <h1> Add your note</h1>
-      <form onSubmit={handleSubmit}>
-        <div className={classes.field}>
-          <TextareaAutosize
-            aria-label="minimum height"
-            rowsMin={3}
-            placeholder="Minimum 3 rows"
-            value={textValue}
-            onChange={handleChange}
-          />
-
-          <Button
-            className={classes.textbutton}
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={length}
-          >
-            <span role="img">🚀</span>
+      {formState !== "done" && (
+        <form onSubmit={handleSubmit}>
+          <div className={classes.field}>
+            <TextareaAutosize
+              aria-label="minimum height"
+              rowsMin={3}
+              placeholder="Minimum 3 rows"
+              value={textValue}
+              onChange={handleChange}
+            />
+            {formState === "idle" && (
+              <div>
+                <button onClick={() => setFormState("done")}>Done</button>
+                <Button
+                  className={classes.textbutton}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={length}
+                >
+                  <span role="img">🚀</span>
+                </Button>
+              </div>
+            )}
+            {formState === "loading" && <span role="img">Loading...</span>}
+          </div>
+        </form>
+      )}
+      {formState === "done" && (
+        <div>
+          <h4>The note has been added ✔</h4>
+          <Button onClick={resetForm} variant="contained">
+            <span role="img">👈</span> Add another
           </Button>
         </div>
-      </form>
+      )}
     </div>
   );
 };
