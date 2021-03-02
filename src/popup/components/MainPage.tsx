@@ -24,6 +24,7 @@ const useStyles = makeStyles({
     width: "20%",
     padding: "10px",
     background: "black",
+    border:"25px"
   },
   logout: {
     position: "absolute",
@@ -104,6 +105,7 @@ const MainPage = () => {
 
   const sendValue = () => {
     const name = valueRef.current.value;
+    // localStorage.setItem('repoName' , name )
     getting_workflows(name);
     console.log(valueRef.current.value); //on clicking button accesing current value of TextField and outputing it to console
   };
@@ -124,7 +126,7 @@ const MainPage = () => {
           >
             logout
           </ExitToAppIcon>
-          <h1 className={classes.font}>Select the repo</h1>
+          <h4 className={classes.font}>Select the repo</h4>
           <Autocomplete
             id="combo-box-demo"
             options={repoNames}

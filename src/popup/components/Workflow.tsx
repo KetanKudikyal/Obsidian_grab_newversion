@@ -3,11 +3,17 @@ import { useState, useRef } from "react";
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-// import {pushContent} from "./pushContent"
+import { pushContent } from "./PushContent"
+import Header from "./Header"
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     border: 0,
     height: 48,
@@ -22,47 +28,76 @@ const useStyles = makeStyles({
     marginTop: "40px",
     borderRadius: "25px",
   },
-});
+  textbuttonAdd: {
+    marginTop: "10px",
+    borderRadius: "25px",
+    color: "white",
+    backgroundColor:"black"
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+  font: {
+    fontFamily: "Roboto",
+  },
+  page: {
+    border: 0,
+    height: 48,
+    padding: "0 30px",
+  },
+}));
 
 const Workflow = (props: { workflows: any }) => {
+  const classes = useStyles();
   const valueRef = useRef("");
   const WorkflowData = props.workflows;
   console.log("WorkFlowPage", WorkflowData);
+  const [age, setAge] = React.useState("");
   const [workflowList, setworkflowList] = useState<boolean>(true);
-  const classes = useStyles();
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
     "idle"
   );
+  // const [state, setState] = React.useState<{ id:  number }>({id:0});
   const [textValue, setTextValue] = useState("");
   const [WorkflowId, setWorkflowId] = useState<number>(null);
-
-  const sendValue = () => {
-    const name = valueRef.current.value;
-    const result = WorkflowData.find(({ name: any }) => name === name);
-    const id = result.id;
-    setWorkflowId(id);
-
-    // const id = props.workflows.find(name)
-    // console.log(id);s
-
-    setworkflowList(false);
-    console.log(valueRef.current.value); //on clicking button accesing current value of TextField and outputing it to console
-  };
+  const [state, setState] = React.useState<{ id: number; name: string }>({
+    id: 0,
+    name: "",
+  });
 
   const length: boolean = !textValue.length;
   console.log(length);
   console.log(formState);
 
+  const handleChangeSelect = (
+    event: React.ChangeEvent<{ name?: string; value: unknown }>
+  ) => {
+    const name = event.target.name as keyof typeof state;
+    console.log(name);
+
+    setState({
+      ...state,
+      [name]: event.target.value,
+    });
+    setworkflowList(false);
+  };
+  console.log(state);
+
   const handleChange = (e) => {
     console.log(e.target.value);
     setTextValue(e.target.value);
   };
+
   const handleSubmit = async (e: React.FormEvent<Element>) => {
     e.preventDefault();
     try {
       setFormState("loading");
 
-      // await pushContent({ data: textValue })
+      await pushContent({ data: textValue , id:state.id})
     } catch (error) {
       console.error(error);
     } finally {
@@ -77,25 +112,28 @@ const Workflow = (props: { workflows: any }) => {
   return (
     <div>
       {workflowList ? (
-        <div>
-          {" "}
-          <Autocomplete
-            id="combo-box-demo"
-            options={props.workflows}
-            getOptionLabel={(option: any) => option.name}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                inputRef={valueRef}
-                label="Repos"
-                variant="outlined"
-              />
-            )}
-            fullWidth
-          />
-          <Button variant="contained" color="secondary" onClick={sendValue}>
-            Send{" "}
-          </Button>
+        <div className={classes.field}>
+             <h4>Choose your workflow</h4>
+          <FormControl variant="filled" className={classes.formControl}>
+         
+            <InputLabel id="demo-simple-select-filled-label">Workflows</InputLabel>
+            <Select
+              labelId="demo-simple-select-filled-label"
+              id="demo-simple-select-filled"
+              value={state}
+              onChange={handleChangeSelect}
+              inputProps={{
+                name: "id",
+                id: "demo-simple-select-filled-label",
+              }}
+            >
+              {WorkflowData.map((w) => (
+                <MenuItem value={w.id} key={w.id}>
+                  {w.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
       ) : (
         <div>
@@ -118,6 +156,7 @@ const Workflow = (props: { workflows: any }) => {
                       color="primary"
                       type="submit"
                       disabled={length}
+                      fullWidth
                     >
                       <span role="img">🚀</span>
                     </Button>
@@ -128,11 +167,14 @@ const Workflow = (props: { workflows: any }) => {
             </form>
           )}
           {formState === "done" && (
-            <div>
-              <h4>The note has been added ✔</h4>
-              <Button onClick={resetForm} variant="contained">
+              <div>
+                <Header />
+              <h4 style={{ textAlign:"center"}} >The note has been added ✔</h4>
+                <div style={{textAlign:"center"}}>
+                <Button className={classes.textbuttonAdd}   color="primary" onClick={resetForm} variant="contained">
                 <span role="img">👈</span> Add another
               </Button>
+                </div>
             </div>
           )}
         </div>
@@ -142,3 +184,22 @@ const Workflow = (props: { workflows: any }) => {
 };
 
 export default Workflow;
+
+// {" "}
+// <Autocomplete
+//   id="combo-box-demo"
+//   options={props.workflows}
+//   getOptionLabel={(option: any) => option.name}
+//   renderInput={(params) => (
+//     <TextField
+//       {...params}
+//       inputRef={valueRef}
+//       label="Repos"
+//       variant="outlined"
+//     />
+//   )}
+//   fullWidth
+// />
+// <Button variant="contained" color="secondary" onClick={sendValue}>
+//   Send{" "}
+// </Button>
