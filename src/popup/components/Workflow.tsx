@@ -10,6 +10,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { pushContent } from "./PushContent"
 import Header from "./Header"
 
@@ -49,6 +50,12 @@ const useStyles = makeStyles((theme) => ({
     height: 48,
     padding: "0 30px",
   },
+  loader: {
+    position: "absolute",
+    top: "200px",
+    left: "230px",
+    color:"black"
+  }
 }));
 
 const Workflow = (props: { workflows: any }) => {
@@ -101,7 +108,8 @@ const Workflow = (props: { workflows: any }) => {
     } catch (error) {
       console.error(error);
     } finally {
-      setFormState("done");
+      setTimeout(() => setFormState("done"), 1000)
+
     }
   };
   const resetForm = () => {
@@ -162,7 +170,8 @@ const Workflow = (props: { workflows: any }) => {
                     </Button>
                   </div>
                 )}
-                {formState === "loading" && <span role="img">Loading...</span>}
+                  {formState === "loading" && <span role="img"><CircularProgress className={classes.loader}
+                    color="secondary" /></span>}
               </div>
             </form>
           )}
