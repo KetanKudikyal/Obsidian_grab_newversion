@@ -5,6 +5,7 @@ import { auth, provider } from "../../background_script/firebase";
 import LoginPage from "./LoginPage";
 import MainPage from "./MainPage";
 import { CircularProgress } from "@material-ui/core";
+import WelcomeScreen from "./WelcomeScreen";
 
 
 const Main = () => {
@@ -31,7 +32,7 @@ const Main = () => {
   console.log(currentUser);
 
   if (!loadComplete) {
-    return <CircularProgress />;
+    return <WelcomeScreen />;
   }
 
   return <div>{!currentUser ? (<LoginPage/>) : <MainPage />}</div>;

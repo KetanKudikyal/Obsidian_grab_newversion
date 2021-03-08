@@ -47,6 +47,7 @@ const MainPage = () => {
   // const [userdata, setuserdata] = useState<[]>([]);
   const [Workflow, setWorkflow] = useState<boolean>(false);
   const [repoNames, setrepoNames] = useState<[]>([]);
+  const [repoName, setrepoName] = useState<string>("");
   const [WorkflowStatus, setWorkflowStatus] = useState<boolean>(true);
   const [WorkflowList, setWorkflowList] = useState<[]>([]);
 
@@ -106,6 +107,7 @@ const MainPage = () => {
   const sendValue = () => {
     const name = valueRef.current.value;
     // localStorage.setItem('repoName' , name )
+    setrepoName(name);
     getting_workflows(name);
     console.log(valueRef.current.value); //on clicking button accesing current value of TextField and outputing it to console
   };
@@ -114,7 +116,7 @@ const MainPage = () => {
     <div className={classes.root}>
       {Workflow ? (
         WorkflowStatus ? (
-          <WorkflowPage workflows={WorkflowList} />
+          <WorkflowPage workflows={WorkflowList} repoName={repoName} />
         ) : (
           <NoWorkFlow />
         )

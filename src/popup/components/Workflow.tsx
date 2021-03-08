@@ -58,9 +58,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Workflow = (props: { workflows: any }) => {
+const Workflow = (props: { workflows: any , repoName: string}) => {
   const classes = useStyles();
   const valueRef = useRef("");
+  const repoName = props.repoName;
   const WorkflowData = props.workflows;
   console.log("WorkFlowPage", WorkflowData);
   const [age, setAge] = React.useState("");
@@ -104,7 +105,7 @@ const Workflow = (props: { workflows: any }) => {
     try {
       setFormState("loading");
 
-      await pushContent({ data: textValue , id:state.id})
+      await pushContent({ data: textValue , id:state.id , repoName})
     } catch (error) {
       console.error(error);
     } finally {
@@ -194,21 +195,3 @@ const Workflow = (props: { workflows: any }) => {
 
 export default Workflow;
 
-// {" "}
-// <Autocomplete
-//   id="combo-box-demo"
-//   options={props.workflows}
-//   getOptionLabel={(option: any) => option.name}
-//   renderInput={(params) => (
-//     <TextField
-//       {...params}
-//       inputRef={valueRef}
-//       label="Repos"
-//       variant="outlined"
-//     />
-//   )}
-//   fullWidth
-// />
-// <Button variant="contained" color="secondary" onClick={sendValue}>
-//   Send{" "}
-// </Button>
