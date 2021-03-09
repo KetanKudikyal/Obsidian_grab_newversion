@@ -10,9 +10,10 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { pushContent } from "./PushContent"
-import Header from "./Header"
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { pushContent } from "./PushContent";
+import Header from "./Header";
+import Sizes from "./AutoCompleteMU";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "10px",
     borderRadius: "25px",
     color: "white",
-    backgroundColor:"black"
+    backgroundColor: "black",
   },
   formControl: {
     margin: theme.spacing(1),
@@ -54,16 +55,22 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: "200px",
     left: "230px",
-    color:"black"
-  }
+    color: "black",
+  },
 }));
 
-const Workflow = (props: { workflows: any , repoName: string}) => {
+const Workflow = (props: {
+  workflows: any;
+  repoName: string;
+  branch: Array<>;
+}) => {
   const classes = useStyles();
   const valueRef = useRef("");
   const repoName = props.repoName;
   const WorkflowData = props.workflows;
+  const Branches = props.branch;
   console.log("WorkFlowPage", WorkflowData);
+  console.log("WorkFlowPage", Branches);
   const [age, setAge] = React.useState("");
   const [workflowList, setworkflowList] = useState<boolean>(true);
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
@@ -76,6 +83,7 @@ const Workflow = (props: { workflows: any , repoName: string}) => {
     id: 0,
     name: "",
   });
+  const [Bname, setBname] = React.useState<string>("");
 
   const length: boolean = !textValue.length;
   console.log(length);
@@ -85,14 +93,28 @@ const Workflow = (props: { workflows: any , repoName: string}) => {
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
     const name = event.target.name as keyof typeof state;
-    console.log(name);
+    console.log("WorkflowName", name);
 
     setState({
       ...state,
       [name]: event.target.value,
     });
-    setworkflowList(false);
   };
+
+  // const handleChangeSelectBranches = (
+  //   event: React.ChangeEvent<{ name?: string; value: unknown }>
+  // ) => {
+  //   const name = event.target.name as keyof typeof state;
+  //   console.log("BranchName" , name);
+
+  //   setBname({
+  //     ...state,
+  //     [name]: event.target.value,
+  //   });
+  //   setworkflowList(false);
+  // };
+
+  console.log("Bracnhindasdada", Bname);
   console.log(state);
 
   const handleChange = (e) => {
@@ -105,12 +127,11 @@ const Workflow = (props: { workflows: any , repoName: string}) => {
     try {
       setFormState("loading");
 
-      await pushContent({ data: textValue , id:state.id , repoName})
+      await pushContent({ data: textValue, id: state.id, repoName , Bname});
     } catch (error) {
       console.error(error);
     } finally {
-      setTimeout(() => setFormState("done"), 1000)
-
+      setTimeout(() => setFormState("done"), 1000);
     }
   };
   const resetForm = () => {
@@ -118,31 +139,56 @@ const Workflow = (props: { workflows: any , repoName: string}) => {
     setFormState("idle");
   };
 
+  const handleChangeB = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setBname(event.target.value as string);
+    setworkflowList(false);
+  };
+
   return (
     <div>
       {workflowList ? (
-        <div className={classes.field}>
-             <h4>Choose your workflow</h4>
-          <FormControl variant="filled" className={classes.formControl}>
-         
-            <InputLabel id="demo-simple-select-filled-label">Workflows</InputLabel>
-            <Select
-              labelId="demo-simple-select-filled-label"
-              id="demo-simple-select-filled"
-              value={state}
-              onChange={handleChangeSelect}
-              inputProps={{
-                name: "id",
-                id: "demo-simple-select-filled-label",
-              }}
-            >
-              {WorkflowData.map((w) => (
-                <MenuItem value={w.id} key={w.id}>
-                  {w.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <div>
+          <div className={classes.field}>
+            <h4>Choose your workflow</h4>
+            <FormControl variant="filled" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-filled-label">
+                Workflows
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-filled-label"
+                id="demo-simple-select-filled"
+                value={state}
+                onChange={handleChangeSelect}
+                inputProps={{
+                  name: "id",
+                  id: "demo-simple-select-filled-label",
+                }}
+              >
+                {WorkflowData.map((w) => (
+                  <MenuItem value={w.id} key={w.id}>
+                    {w.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+
+          <div className={classes.field}>
+            <h4>Choose your Branch</h4>
+            <FormControl variant="filled" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-filled-label">Age</InputLabel>
+              <Select
+                labelId="demo-simple-select-filled-label"
+                id="demo-simple-select-filled"
+                value={Bname}
+                onChange={handleChangeB}
+              >
+                {
+                  Branches.map((b) => <MenuItem value={b.name}>{b.name}</MenuItem>)
+                }
+              </Select>
+            </FormControl>
+          </div>
         </div>
       ) : (
         <div>
@@ -171,20 +217,31 @@ const Workflow = (props: { workflows: any , repoName: string}) => {
                     </Button>
                   </div>
                 )}
-                  {formState === "loading" && <span role="img"><CircularProgress className={classes.loader}
-                    color="secondary" /></span>}
+                {formState === "loading" && (
+                  <span role="img">
+                    <CircularProgress
+                      className={classes.loader}
+                      color="secondary"
+                    />
+                  </span>
+                )}
               </div>
             </form>
           )}
           {formState === "done" && (
-              <div>
-                <Header />
-              <h4 style={{ textAlign:"center"}} >The note has been added ✔</h4>
-                <div style={{textAlign:"center"}}>
-                <Button className={classes.textbuttonAdd}   color="primary" onClick={resetForm} variant="contained">
-                <span role="img">👈</span> Add another
-              </Button>
-                </div>
+            <div>
+              <Header />
+              <h4 style={{ textAlign: "center" }}>The note has been added ✔</h4>
+              <div style={{ textAlign: "center" }}>
+                <Button
+                  className={classes.textbuttonAdd}
+                  color="primary"
+                  onClick={resetForm}
+                  variant="contained"
+                >
+                  <span role="img">👈</span> Add another
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -194,4 +251,3 @@ const Workflow = (props: { workflows: any , repoName: string}) => {
 };
 
 export default Workflow;
-

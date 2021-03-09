@@ -9,6 +9,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import NoWorkFlow from "./NoWorkFlow";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import { fetchBranch } from "./GettingBranches";
 
 const useStyles = makeStyles({
   root: {
@@ -50,6 +51,7 @@ const MainPage = () => {
   const [repoName, setrepoName] = useState<string>("");
   const [WorkflowStatus, setWorkflowStatus] = useState<boolean>(true);
   const [WorkflowList, setWorkflowList] = useState<[]>([]);
+  const [branch, setBranch] = useState<[]>([]);
 
   async function fetchdata() {
     const token = localStorage.getItem("accesstoken");
@@ -67,7 +69,22 @@ const MainPage = () => {
     setrepoNames(...repoNames, Repos);
   }
 
+  // async function fetchbranch(repositoryName:string) {
+  //   const token = localStorage.getItem("accesstoken");
+
+  //   // https://api.github.com/repos/joomla/joomla-cms/branches
+  //   const req = await fetch(`https://api.github.com/user/repos/${repositoryName}/branches` , {
+  //     headers: {
+  //       Accept: "application/vnd.github.v3+json",
+  //       Authorization: `token ${token}`,
+  //     },
+  //   });
+  //   const data = await req.json();
+  //   console.log("Branches" , data);
+  // }
+
   React.useEffect(() => {
+    
     fetchdata();
   }, []);
 
@@ -104,19 +121,43 @@ const MainPage = () => {
 
   const valueRef = useRef(""); //creating a refernce for TextField Component
 
+
+  
   const sendValue = () => {
     const name = valueRef.current.value;
     // localStorage.setItem('repoName' , name )
     setrepoName(name);
+    gettingbranches(name)
     getting_workflows(name);
     console.log(valueRef.current.value); //on clicking button accesing current value of TextField and outputing it to console
   };
 
+  async function gettingbranches( name : string) {
+    
+    try {
+      const namerepo = name
+      
+      console.log("RepoName that is being stated" , repoName);
+      
+      const data = await fetchBranch({ namerepo })
+      setBranch(data)
+      console.log("gettingbranches" , data);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+
+  console.log("Branching" , repoName);
+  console.log("Branching" , branch);
+  
   return (
     <div className={classes.root}>
       {Workflow ? (
         WorkflowStatus ? (
-          <WorkflowPage workflows={WorkflowList} repoName={repoName} />
+          <WorkflowPage workflows={WorkflowList} branch={branch} repoName={repoName} />
         ) : (
           <NoWorkFlow />
         )

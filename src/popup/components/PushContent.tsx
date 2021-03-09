@@ -1,5 +1,5 @@
-export const pushContent = (args : { data : string , id :number , repoName:string}) => {
-  const raw = JSON.stringify({"ref":"main" , "inputs":{"data" : args.data}})
+export const pushContent = (args : { data : string , id :number , repoName:string , Bname:string}) => {
+  const raw = JSON.stringify({"ref":args.Bname , "inputs":{"data" : args.data}})
   const token = localStorage.getItem("accesstoken")
   console.log("PushContent" , token);
   

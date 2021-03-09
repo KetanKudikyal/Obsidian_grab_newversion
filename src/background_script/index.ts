@@ -1,4 +1,6 @@
 // export const getting_workflows = async (name: string) => {
+
+
 //   const token = localStorage.getItem("accesstoken");
 //   console.log("getting_Workflow", name);
 
@@ -37,3 +39,10 @@
 //   const data = await req.json();
 //   console.log(data);
 // };
+
+const polling = () => {
+  console.log("polling");
+  setTimeout(polling, 1000 * 30);
+};
+
+polling();
