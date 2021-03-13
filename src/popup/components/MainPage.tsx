@@ -96,8 +96,10 @@ const MainPage = () => {
 
 
   const getting_workflows = async (name: string) => {
-    const token = localStorage.getItem("accesstoken");
-    console.log("getting_Workflow", name);
+    const TOKO = await getSyncStorage("AccessToken")
+    console.log("Token" , TOKO);
+    
+    const token = TOKO.AccessToken
 
     const req = await fetch(
       `https://api.github.com/repos/${name}/actions/workflows?type=owner`,

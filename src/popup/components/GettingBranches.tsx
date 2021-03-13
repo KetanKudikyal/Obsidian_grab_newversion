@@ -1,6 +1,10 @@
+import { getSyncStorage } from "./sync-storage";
+
 export const fetchBranch = async (args : { namerepo:string}) => {
   // const raw = JSON.stringify({"ref":"main" , "inputs":{"data" : args.data}})
-  const token = localStorage.getItem("accesstoken")
+  const TOKO = await getSyncStorage("AccessToken")
+  console.log("Token" , TOKO);
+const token = TOKO.AccessToken
   console.log("PushContent" , token);
   
   // const repoName = localStorage.getItem("repoName")

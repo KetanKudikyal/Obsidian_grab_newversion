@@ -1,6 +1,10 @@
-export const pushContent = (args : { data : string , id :number , repoName:string , Bname:string}) => {
+import { getSyncStorage } from "./sync-storage";
+
+export const pushContent = async (args : { data : string , id :number , repoName:string , Bname:string}) => {
   const raw = JSON.stringify({"ref":args.Bname , "inputs":{"data" : args.data}})
-  const token = localStorage.getItem("accesstoken")
+  const TOKO = await getSyncStorage("AccessToken")
+    console.log("Token" , TOKO);
+  const token = TOKO.AccessToken
   console.log("PushContent" , token);
   
   // const repoName = localStorage.getItem("repoName")

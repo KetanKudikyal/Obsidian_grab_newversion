@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Card, Divider, makeStyles } from "@material-ui/core";
+import { Button, Card, makeStyles } from "@material-ui/core";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import { provider, auth } from "../../background_script/firebase";
 import firebase from "firebase";
@@ -8,8 +8,6 @@ import { setSyncStorage } from "./sync-storage.js";
 const signInwithGithub = async () => {
   auth.signInWithPopup(provider).then(async (result) => {
     var Credential = result.credential as firebase.auth.OAuthCredential;
-    var user = result.user;
-    // console.log(user);
     var token: string = Credential.accessToken || "";
     await setSyncStorage("AccessToken", token);
   });
@@ -62,7 +60,6 @@ const LoginPage = () => {
         <div className={classes.appHeader}>
           <h1>Obsidian Grab</h1>
           <GitHubIcon style={{ fontSize: 60 }} />
-          {/* <img src="https://img.icons8.com/material-sharp/48/000000/github.png" className={classes.appLogo} alt="logo" /> */}
         </div>
       </div>
       <div
@@ -73,7 +70,6 @@ const LoginPage = () => {
           marginBottom: "25px",
         }}
       >
-        {/* <GitHubIcon style={{ fontSize: 60 }} /> */}
         <Card elevation={5} className={classes.card}>
           <Button
             fullWidth

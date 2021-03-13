@@ -18,8 +18,6 @@ const Main = () => {
         }, 50);
       }
       setcurrentUser(user);
-      let tokenn = localStorage.getItem("accesstoken");
-      console.log(tokenn);
     });
 
     return () => {

@@ -5,15 +5,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { pushContent } from "./PushContent";
 import Header from "./Header";
-import Sizes from "./AutoCompleteMU";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,13 +61,11 @@ const Workflow = (props: {
   branch: Array<>;
 }) => {
   const classes = useStyles();
-  const valueRef = useRef("");
   const repoName = props.repoName;
   const WorkflowData = props.workflows;
   const Branches = props.branch;
   console.log("WorkFlowPage", WorkflowData);
   console.log("WorkFlowPage", Branches);
-  const [age, setAge] = React.useState("");
   const [workflowList, setworkflowList] = useState<boolean>(true);
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
     "idle"
@@ -85,18 +79,17 @@ const Workflow = (props: {
   });
   const [Bname, setBname] = React.useState<string>("");
 
-  const length: boolean = !textValue.length;
+  
+  const length = !textValue.length;
   console.log(length);
   console.log(formState);
 
   useEffect(() => {
-    const queryInfo = { active: true, lastFocusedWindow: true };
-    chrome.tabs &&
-      chrome.tabs.query(queryInfo, (tabs) => {
-        const url = tabs[0].url;
-        console.log("URLS", url);
-        setUrl(url);
-      });
+    const queryInfo = {active: true, lastFocusedWindow: true};
+        chrome.tabs && chrome.tabs.query(queryInfo, tabs => {
+            const url = tabs[0].url;
+            setUrl(url);
+        });
   }, []);
 
   console.log("Urls", url);
@@ -113,18 +106,6 @@ const Workflow = (props: {
     });
   };
 
-  // const handleChangeSelectBranches = (
-  //   event: React.ChangeEvent<{ name?: string; value: unknown }>
-  // ) => {
-  //   const name = event.target.name as keyof typeof state;
-  //   console.log("BranchName" , name);
-
-  //   setBname({
-  //     ...state,
-  //     [name]: event.target.value,
-  //   });
-  //   setworkflowList(false);
-  // };
 
   console.log("Bracnhindasdada", Bname);
   console.log(state);
@@ -201,7 +182,7 @@ const Workflow = (props: {
                 onChange={handleChangeB}
               >
                 {Branches.map((b) => (
-                  <MenuItem value={b.name}>{b.name}</MenuItem>
+                  <MenuItem key={b.id} value={b.name}>{b.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>
