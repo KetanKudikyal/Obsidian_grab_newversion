@@ -10,6 +10,8 @@ import NoWorkFlow from "./NoWorkFlow";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { fetchBranch } from "./GettingBranches";
+import { getSyncStorage, removeSyncStorage } from "./sync-storage.js";
+
 
 const useStyles = makeStyles({
   root: {
@@ -48,14 +50,17 @@ const MainPage = () => {
   // const [userdata, setuserdata] = useState<[]>([]);
   const [Workflow, setWorkflow] = useState<boolean>(false);
   const [repoNames, setrepoNames] = useState<[]>([]);
+  const [loadComplete, setLoadComplete] = React.useState<boolean>(false);
   const [repoName, setrepoName] = useState<string>("");
   const [WorkflowStatus, setWorkflowStatus] = useState<boolean>(true);
   const [WorkflowList, setWorkflowList] = useState<[]>([]);
   const [branch, setBranch] = useState<[]>([]);
 
   async function fetchdata() {
-    const token = localStorage.getItem("accesstoken");
-    console.log("ABye", token);
+    const TOKO = await getSyncStorage("AccessToken")
+    console.log("Token" , TOKO);
+    
+    const token = TOKO.AccessToken
     const req = await fetch("https://api.github.com/user/repos?type=owner", {
       headers: {
         Accept: "application/vnd.github.v3+json",
@@ -84,12 +89,11 @@ const MainPage = () => {
   // }
 
   React.useEffect(() => {
-    window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-     console.log(message);
-     
-    });
+   
     fetchdata();
   }, []);
+
+
 
   const getting_workflows = async (name: string) => {
     const token = localStorage.getItem("accesstoken");
@@ -152,6 +156,10 @@ const MainPage = () => {
     }
   }
 
+  const handleRemove = async () => {
+    await removeSyncStorage("AccessToken")
+    auth.signOut()
+  }
 
   console.log("Branching" , repoName);
   console.log("Branching" , branch);
@@ -168,7 +176,7 @@ const MainPage = () => {
         <div className={classes.page}>
           <ExitToAppIcon
             className={classes.logout}
-            onClick={() => auth.signOut()}
+            onClick={handleRemove}
           >
             logout
           </ExitToAppIcon>

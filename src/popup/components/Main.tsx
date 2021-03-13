@@ -4,19 +4,15 @@ import "firebase/auth";
 import { auth, provider } from "../../background_script/firebase";
 import LoginPage from "./LoginPage";
 import MainPage from "./MainPage";
-import { CircularProgress } from "@material-ui/core";
 import WelcomeScreen from "./WelcomeScreen";
-
 
 const Main = () => {
   const [currentUser, setcurrentUser] = React.useState<any>(null);
   const [loadComplete, setLoadComplete] = React.useState<boolean>(false);
 
-
   React.useEffect(() => {
     const unregisterAuthObserver = auth.onAuthStateChanged((user) => {
-      if (!loadComplete) {
-        // Let's give user some time to enjoy the animation shall we?
+      if (!loadComplete) { 
         setTimeout(() => {
           setLoadComplete(true);
         }, 50);
@@ -25,20 +21,17 @@ const Main = () => {
       let tokenn = localStorage.getItem("accesstoken");
       console.log(tokenn);
     });
-   
-    
-    return function () {
+
+    return () => {
       unregisterAuthObserver();
     };
   }, []);
-
-  console.log(currentUser);
 
   if (!loadComplete) {
     return <WelcomeScreen />;
   }
 
-  return <div>{!currentUser ? (<LoginPage />) : <MainPage />}</div>;
+  return <div>{!currentUser ? <LoginPage /> : <MainPage />}</div>;
 };
 
 export default Main;

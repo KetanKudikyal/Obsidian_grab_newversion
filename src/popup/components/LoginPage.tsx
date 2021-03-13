@@ -3,23 +3,22 @@ import { Button, Card, Divider, makeStyles } from "@material-ui/core";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import { provider, auth } from "../../background_script/firebase";
 import firebase from "firebase";
-// const appStyles = require("../App.css");
-const logo = require("../../../public/icon.png");
+import { setSyncStorage } from "./sync-storage.js";
 
-const signInwithGithub = () => {
-  auth.signInWithPopup(provider).then((result) => {
+const signInwithGithub = async () => {
+  auth.signInWithPopup(provider).then(async (result) => {
     var Credential = result.credential as firebase.auth.OAuthCredential;
     var user = result.user;
-    console.log(user);
+    // console.log(user);
     var token: string = Credential.accessToken || "";
-    localStorage.setItem("accesstoken", token);
+    await setSyncStorage("AccessToken", token);
   });
 };
 
 const useStyles = makeStyles((theme) => ({
   container: {
     display: "grid",
-    placeItems: "center",
+    // placeItems: "center",
     height: "100vh",
   },
   button: {
@@ -35,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1.5),
   },
   card: {
-    marginTop: "50px",
+    marginTop: "25px",
+    marginBottom: "10px",
     minWidth: 275,
   },
   appHeader: {
@@ -70,6 +70,7 @@ const LoginPage = () => {
           display: "flex",
           flexDirection: "column",
           placeItems: "center",
+          marginBottom: "25px",
         }}
       >
         {/* <GitHubIcon style={{ fontSize: 60 }} /> */}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect ,  useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
@@ -77,8 +77,8 @@ const Workflow = (props: {
     "idle"
   );
   const [textValue, setTextValue] = useState("");
-  const [url, setUrl] = useState<string>('');
-  const [WorkflowId, setWorkflowId] = useState<number>(null);
+  const [url, setUrl] = useState<any | null>(null);
+  // const [WorkflowId, setWorkflowId] = useState<number>(null);
   const [state, setState] = React.useState<{ id: number; name: string }>({
     id: 0,
     name: "",
@@ -91,14 +91,16 @@ const Workflow = (props: {
 
   useEffect(() => {
     const queryInfo = { active: true, lastFocusedWindow: true };
-    chrome.tabs && chrome.tabs.query(queryInfo, tabs => {
-      const url = tabs[0].url;
-      setUrl(url);
-    });
+    chrome.tabs &&
+      chrome.tabs.query(queryInfo, (tabs) => {
+        const url = tabs[0].url;
+        console.log("URLS", url);
+        setUrl(url);
+      });
   }, []);
 
-  console.log("Urls" , url);
-  
+  console.log("Urls", url);
+
   const handleChangeSelect = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
@@ -137,7 +139,7 @@ const Workflow = (props: {
     try {
       setFormState("loading");
 
-      await pushContent({ data: textValue, id: state.id, repoName , Bname});
+      await pushContent({ data: textValue, id: state.id, repoName, Bname });
     } catch (error) {
       console.error(error);
     } finally {
@@ -155,8 +157,8 @@ const Workflow = (props: {
   };
 
   const UrlValue = () => {
-    setTextValue(url)
-  }
+    setTextValue(url);
+  };
   return (
     <div>
       {workflowList ? (
@@ -189,16 +191,18 @@ const Workflow = (props: {
           <div className={classes.field}>
             <h4>Choose your Branch</h4>
             <FormControl variant="filled" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-filled-label">Age</InputLabel>
+              <InputLabel id="demo-simple-select-filled-label">
+                Branch
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-filled-label"
                 id="demo-simple-select-filled"
                 value={Bname}
                 onChange={handleChangeB}
               >
-                {
-                  Branches.map((b) => <MenuItem value={b.name}>{b.name}</MenuItem>)
-                }
+                {Branches.map((b) => (
+                  <MenuItem value={b.name}>{b.name}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           </div>
@@ -227,8 +231,16 @@ const Workflow = (props: {
                       fullWidth
                     >
                       <span role="img">🚀</span>
-                      </Button>
-                      <Button onClick={UrlValue}>Add Current Value</Button>
+                    </Button>
+                    <Button
+                      className={classes.textbutton}
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={UrlValue}
+                    >
+                      Add Current Url
+                    </Button>
                   </div>
                 )}
                 {formState === "loading" && (
