@@ -31,6 +31,7 @@
   "content_security_policy": "script-src 'self' https://apis.google.com​",
   "permissions": [
     "tabs",
+    "activeTab",
     "storage",
     "<all_urls>"
   ]

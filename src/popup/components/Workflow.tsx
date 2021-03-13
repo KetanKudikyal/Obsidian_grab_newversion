@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useRef } from "react";
+import { useState, useEffect ,  useRef } from "react";
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
@@ -76,8 +76,8 @@ const Workflow = (props: {
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
     "idle"
   );
-  // const [state, setState] = React.useState<{ id:  number }>({id:0});
   const [textValue, setTextValue] = useState("");
+  const [url, setUrl] = useState<string>('');
   const [WorkflowId, setWorkflowId] = useState<number>(null);
   const [state, setState] = React.useState<{ id: number; name: string }>({
     id: 0,
@@ -89,6 +89,16 @@ const Workflow = (props: {
   console.log(length);
   console.log(formState);
 
+  useEffect(() => {
+    const queryInfo = { active: true, lastFocusedWindow: true };
+    chrome.tabs && chrome.tabs.query(queryInfo, tabs => {
+      const url = tabs[0].url;
+      setUrl(url);
+    });
+  }, []);
+
+  console.log("Urls" , url);
+  
   const handleChangeSelect = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
@@ -144,6 +154,9 @@ const Workflow = (props: {
     setworkflowList(false);
   };
 
+  const UrlValue = () => {
+    setTextValue(url)
+  }
   return (
     <div>
       {workflowList ? (
@@ -214,7 +227,8 @@ const Workflow = (props: {
                       fullWidth
                     >
                       <span role="img">🚀</span>
-                    </Button>
+                      </Button>
+                      <Button onClick={UrlValue}>Add Current Value</Button>
                   </div>
                 )}
                 {formState === "loading" && (

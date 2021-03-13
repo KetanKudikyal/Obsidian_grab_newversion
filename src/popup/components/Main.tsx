@@ -12,6 +12,7 @@ const Main = () => {
   const [currentUser, setcurrentUser] = React.useState<any>(null);
   const [loadComplete, setLoadComplete] = React.useState<boolean>(false);
 
+
   React.useEffect(() => {
     const unregisterAuthObserver = auth.onAuthStateChanged((user) => {
       if (!loadComplete) {
@@ -24,6 +25,8 @@ const Main = () => {
       let tokenn = localStorage.getItem("accesstoken");
       console.log(tokenn);
     });
+   
+    
     return function () {
       unregisterAuthObserver();
     };
@@ -35,7 +38,7 @@ const Main = () => {
     return <WelcomeScreen />;
   }
 
-  return <div>{!currentUser ? (<LoginPage/>) : <MainPage />}</div>;
+  return <div>{!currentUser ? (<LoginPage />) : <MainPage />}</div>;
 };
 
 export default Main;
