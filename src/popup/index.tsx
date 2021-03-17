@@ -1,10 +1,14 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "./App";
+import { AuthProvider } from "./utils/useToken";
 
 require("./index.css");
 
 ReactDOM.render(
-  <App />,
-  document.getElementById("root") as HTMLElement,
+  
+    <AuthProvider>
+      <App />,
+    </AuthProvider>,
+  document.getElementById("root") as HTMLElement
 );

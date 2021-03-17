@@ -8,8 +8,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { pushContent } from "./PushContent";
+import { pushContent } from "../utils/PushContent";
 import Header from "./Header";
+import { AppCredentials, useCred } from "../utils/useToken";
+import { getSyncStorage, setSyncStorage } from "../utils/sync-storage";
+import AddNote from "./AddNote";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Workflow = (props: {
   workflows: any;
+  
   repoName: string;
   branch: Array<>;
 }) => {
@@ -64,6 +68,7 @@ const Workflow = (props: {
   const repoName = props.repoName;
   const WorkflowData = props.workflows;
   const Branches = props.branch;
+ 
   console.log("WorkFlowPage", WorkflowData);
   console.log("WorkFlowPage", Branches);
   const [workflowList, setworkflowList] = useState<boolean>(true);
@@ -72,43 +77,37 @@ const Workflow = (props: {
   );
   const [textValue, setTextValue] = useState("");
   const [url, setUrl] = useState<any | null>(null);
-  // const [WorkflowId, setWorkflowId] = useState<number>(null);
   const [state, setState] = React.useState<{ id: number; name: string }>({
     id: 0,
     name: "",
   });
   const [Bname, setBname] = React.useState<string>("");
+  const { handleChange: updateCreds, cred } = useCred()
+  // console.log("Utkarsh" ,cred?.repoName );
+  console.log("WorkflowCred" , cred)
+  const lengthD = !textValue.length;
 
   
-  const length = !textValue.length;
-  console.log(length);
-  console.log(formState);
 
   useEffect(() => {
     const queryInfo = {active: true, lastFocusedWindow: true};
         chrome.tabs && chrome.tabs.query(queryInfo, tabs => {
-            const url = tabs[0].url;
+            var url = tabs[0].url;
             setUrl(url);
         });
   }, []);
 
-  console.log("Urls", url);
 
-  const handleChangeSelect = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
+  const handleChangeSelect = async (event: React.ChangeEvent<{ name?: string; value: unknown }>, key: keyof AppCredentials)  => {
     const name = event.target.name as keyof typeof state;
+    await setSyncStorage("workflowId" , event.target.value)
     console.log("WorkflowName", name);
-
     setState({
       ...state,
       [name]: event.target.value,
     });
+    updateCreds?.({ ...(cred || {}), [key]: String(event.target.value) })
   };
-
-
-  console.log("Bracnhindasdada", Bname);
-  console.log(state);
 
   const handleChange = (e) => {
     console.log(e.target.value);
@@ -119,7 +118,6 @@ const Workflow = (props: {
     e.preventDefault();
     try {
       setFormState("loading");
-
       await pushContent({ data: textValue, id: state.id, repoName, Bname });
     } catch (error) {
       console.error(error);
@@ -132,8 +130,10 @@ const Workflow = (props: {
     setFormState("idle");
   };
 
-  const handleChangeB = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleChangeB = async (event: React.ChangeEvent<{ value: unknown }> , key: keyof AppCredentials) => {
     setBname(event.target.value as string);
+    await setSyncStorage('Bname' , event.target.value)
+    updateCreds?.({ ...(cred || {}), [key]: String(event.target.value) })
     setworkflowList(false);
   };
 
@@ -154,7 +154,7 @@ const Workflow = (props: {
                 labelId="demo-simple-select-filled-label"
                 id="demo-simple-select-filled"
                 value={state}
-                onChange={handleChangeSelect}
+                onChange={(e) => handleChangeSelect(e, 'workflowId')}
                 inputProps={{
                   name: "id",
                   id: "demo-simple-select-filled-label",
@@ -179,7 +179,7 @@ const Workflow = (props: {
                 labelId="demo-simple-select-filled-label"
                 id="demo-simple-select-filled"
                 value={Bname}
-                onChange={handleChangeB}
+                onChange={(e) => handleChangeB(e, 'branch')}
               >
                 {Branches.map((b) => (
                   <MenuItem key={b.id} value={b.name}>{b.name}</MenuItem>
@@ -188,73 +188,9 @@ const Workflow = (props: {
             </FormControl>
           </div>
         </div>
-      ) : (
-        <div>
-          {formState !== "done" && (
-            <form onSubmit={handleSubmit}>
-              <div className={classes.field}>
-                <h4>Add a note</h4>
-                <TextareaAutosize
-                  aria-label="minimum height"
-                  rowsMin={3}
-                  placeholder="Add a note"
-                  value={textValue}
-                  onChange={handleChange}
-                />
-                {formState === "idle" && (
-                  <div>
-                    <Button
-                      className={classes.textbutton}
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={length}
-                      fullWidth
-                    >
-                      <span role="img">🚀</span>
-                    </Button>
-                    <Button
-                      className={classes.textbutton}
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      onClick={UrlValue}
-                    >
-                      Add Current Url
-                    </Button>
-                  </div>
-                )}
-                {formState === "loading" && (
-                  <span role="img">
-                    <CircularProgress
-                      className={classes.loader}
-                      color="secondary"
-                    />
-                  </span>
-                )}
-              </div>
-            </form>
-          )}
-          {formState === "done" && (
-            <div>
-              <Header />
-              <h4 style={{ textAlign: "center" }}>The note has been added ✔</h4>
-              <div style={{ textAlign: "center" }}>
-                <Button
-                  className={classes.textbuttonAdd}
-                  color="primary"
-                  onClick={resetForm}
-                  variant="contained"
-                >
-                  <span role="img">👈</span> Add another
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
+      ) : (<AddNote  Bname={Bname} workflowId={state.id}   repoName={repoName} />)
+      }
+</div>
+  )};
 
 export default Workflow;

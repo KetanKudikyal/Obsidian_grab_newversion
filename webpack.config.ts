@@ -20,6 +20,7 @@ const buildConfig: webpack.Configuration = {
   },
   // tslint:disable-next-line:no-object-literal-type-assertion
   module: {
+    
     rules: [
       // compile ts
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },

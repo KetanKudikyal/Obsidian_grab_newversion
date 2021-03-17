@@ -1,6 +1,8 @@
 import * as React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Header from "./Header";
+import Header from "../components/Header";
+
+
 const useStyles = makeStyles({
   root: {
     border: 0,
