@@ -38,6 +38,7 @@ const useStyles = makeStyles({
     top: "10px",
     right: "10px",
     cursor: "pointer",
+    marginBottom: "25px",
   },
   font: {
     fontFamily: "Roboto",

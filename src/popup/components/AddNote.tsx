@@ -139,8 +139,22 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
   };
 
   const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUrlValue(url);
-    setLength(false);
+  //  if
+    if (event.target.checked === true) {
+      setUrlValue(url);
+      setLength(!event.target.checked);
+    }
+    // if Url is checked
+    if (event.target.checked === false) {
+      setUrlValue("")
+      if (textValue.length > 0) {
+        
+      setLength(event.target.checked);
+        
+      } else {
+        setLength(!event.target.checked);
+      }
+    }
     setAlert(event.target.checked);
     setState({ ...state, [event.target.name]: event.target.checked });
   };
