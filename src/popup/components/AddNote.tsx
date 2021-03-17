@@ -1,20 +1,18 @@
-import * as React from 'react'
-import { useEffect, useState } from 'react';
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import BackspaceIcon from '@material-ui/icons/Backspace';
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
+import BackspaceIcon from "@material-ui/icons/Backspace";
 import { pushContent } from "../utils/PushContent";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Header from "./Header";
-import { getSyncStorage, removeSyncStorage } from '../utils/sync-storage';
-import { auth } from '../../background_script/firebase';
-import MainPage from '../pages/MainPage';
-
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import { getSyncStorage, removeSyncStorage } from "../utils/sync-storage";
+import MainPage from "../pages/MainPage";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,56 +61,57 @@ const useStyles = makeStyles((theme) => ({
     top: "10px",
     right: "10px",
     cursor: "pointer",
-  }
+  },
 }));
 
-
-
 const AddNote = ({ Bname, repoName, workflowId }) => {
- 
-
   const classes = useStyles();
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
     "idle"
   );
-  const [state, setState] = React.useState<{ id: number; name: string }>({
-    id: 0,
-    name: "",
+  // const [state, setState] = React.useState<{ id: number; name: string }>({
+  //   id: 0,
+  //   name: "",
+  // });
+  const [state, setState] = React.useState({
+    checkedB: true,
   });
   const [main, setmain] = useState<boolean>(false);
+  const [alert, setAlert] = useState<boolean>(false);
   const [textValue, setTextValue] = useState("");
   const [UrlValue, setUrlValue] = useState("");
   const [url, setUrl] = useState<any | null>(null);
   const [length, setLength] = useState<boolean>(true);
 
-  // if (!textValue.length) {
-  //   setLength(false)
-  // }
-
   const getttingCredentials = async () => {
-    const token = await getSyncStorage("AccessToken")
-    const repoName = await getSyncStorage("repoName")
-    const workflowId = await getSyncStorage("workflowId")
+    const token = await getSyncStorage("AccessToken");
+    const repoName = await getSyncStorage("repoName");
+    const workflowId = await getSyncStorage("workflowId");
     console.log(token.AccessToken);
     console.log(repoName.repoName);
     console.log(workflowId.workflowId);
-  }
+  };
 
   useEffect(() => {
-    getttingCredentials()
+    getttingCredentials();
     const queryInfo = { active: true, lastFocusedWindow: true };
-    chrome.tabs && chrome.tabs.query(queryInfo, tabs => {
-      var url = tabs[0].url;
-      setUrl(url);
-    });
+    chrome.tabs &&
+      chrome.tabs.query(queryInfo, (tabs) => {
+        var url = tabs[0].url;
+        setUrl(url);
+      });
   }, []);
-
 
   const handleSubmit = async (e: React.FormEvent<Element>) => {
     e.preventDefault();
     try {
       setFormState("loading");
-      await pushContent({ data: textValue || UrlValue, id: workflowId, repoName, Bname });
+      await pushContent({
+        data: textValue || UrlValue,
+        id: workflowId,
+        repoName,
+        Bname,
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -126,32 +125,40 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
 
   const handleChange = (e) => {
     if (e.target.value.length > 0) {
-      setLength(false)
+      setLength(false);
     }
     console.log(e.target.value);
     setTextValue(e.target.value);
-   
   };
 
   const S = () => {
     // setTextValue(url);
-    setUrlValue(url)
-    setLength(false)
+    setAlert(true);
+    setUrlValue(url);
+    setLength(false);
+  };
+
+  const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUrlValue(url);
+    setLength(false);
+    setAlert(event.target.checked);
+    setState({ ...state, [event.target.name]: event.target.checked });
   };
 
   const removeCred = async () => {
-    await removeSyncStorage("repoName")
-    await removeSyncStorage("workflowId")
-    await removeSyncStorage("Bname")
-    setmain(true)
-  }
+    await removeSyncStorage("repoName");
+    await removeSyncStorage("workflowId");
+    await removeSyncStorage("Bname");
+    setmain(true);
+  };
 
   return (
     <div>
-
-      {main ? <MainPage /> : (
+      {main ? (
+        <MainPage />
+      ) : (
         <div>
-          < BackspaceIcon className={classes.backButton} onClick={removeCred} />
+          <BackspaceIcon className={classes.backButton} onClick={removeCred} />
           {formState !== "done" && (
             <form onSubmit={handleSubmit}>
               <div className={classes.field}>
@@ -165,6 +172,28 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
                 />
                 {formState === "idle" && (
                   <div>
+                    {!alert ? (
+                        <div>
+                      </div>
+                    ) : (
+                      <div>
+                        <Alert onClose={() => setAlert(false)}>
+                          Url Added Successfully
+                        </Alert>
+                      </div>
+                      )}
+                      <FormGroup row>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            onChange={handleCheckbox}
+                            name="checkedB"
+                            color="primary"
+                          />
+                        }
+                        label="Add Url"
+                      />
+                    </FormGroup>
                     <Button
                       className={classes.textbutton}
                       variant="contained"
@@ -174,15 +203,6 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
                       fullWidth
                     >
                       <span role="img">🚀</span>
-                    </Button>
-                    <Button
-                      className={classes.textbutton}
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      onClick={S}
-                    >
-                      Add Current Url
                     </Button>
                   </div>
                 )}
@@ -212,13 +232,11 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
                 </Button>
               </div>
             </div>
-
           )}
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-
-export default AddNote
+export default AddNote;
