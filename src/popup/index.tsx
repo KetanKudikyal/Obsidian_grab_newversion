@@ -7,8 +7,8 @@ require("./index.css");
 
 ReactDOM.render(
   
-    <AuthProvider>
-      <App />,
-    </AuthProvider>,
+      <AuthProvider>
+      <App />
+      </AuthProvider>,
   document.getElementById("root") as HTMLElement
 );

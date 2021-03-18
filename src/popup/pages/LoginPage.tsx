@@ -3,13 +3,7 @@ import { Button, Card, makeStyles } from "@material-ui/core";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import { provider, auth } from "../../background_script/firebase";
 import firebase from "firebase";
-import { getSyncStorage, setSyncStorage } from "../utils/sync-storage.js";
 import { AppCredentials, useCred } from "../utils/useToken";
-import { useState } from "react";
-import { useContext } from "react";
-
-
-
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -50,21 +44,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LoginPage = () => {
-  const { handleChange: updateCreds, cred } = useCred()
-  
- 
-  const signInwithGithub =  async (key: keyof AppCredentials) => {
+  const { handleChange: updateCreds, cred, setCred } = useCred();
+  const [user, setuser] = React.useState<any>();
+
+  const signInwithGithub = async (key: keyof AppCredentials) => {
     auth.signInWithPopup(provider).then(async (result) => {
       var Credential = result.credential as firebase.auth.OAuthCredential;
+      var user = result.user;
+      // console.log(user);
+      setuser(user)
       var tokenfromfirebase: string = Credential.accessToken || "";
-      await setSyncStorage("AccessToken", tokenfromfirebase);
-      const Token = await getSyncStorage("AccessToken");
-      updateCreds?.({ ...(cred || {}), [key]: String(tokenfromfirebase) })
-
+      updateCreds?.({ ...(cred || {}), [key]: String(tokenfromfirebase) });
     });
   };
 
  
+
+  React.useEffect(() => {
+
+    console.log(user);
+  }, []);
+
+  
   const classes = useStyles();
 
   return (
@@ -88,7 +89,7 @@ const LoginPage = () => {
             fullWidth
             disableElevation={false}
             className={classes.button}
-            onClick={() => signInwithGithub("AccessTokennnn")}
+            onClick={() => signInwithGithub("token")}
             color="primary"
           >
             <img

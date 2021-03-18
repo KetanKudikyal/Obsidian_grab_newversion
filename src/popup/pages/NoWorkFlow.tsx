@@ -1,13 +1,14 @@
 import * as React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Header from "../components/Header";
+import { useEffect } from "react";
+import { useCred } from "../utils/useToken";
 
 
 const useStyles = makeStyles({
   root: {
     border: 0,
     height: 48,
-    // padding: "0 30px",
   },
   text: {
     marginTop: "25px",
@@ -17,6 +18,17 @@ const useStyles = makeStyles({
 
 const NoWorkFlow = () => {
   const classes = useStyles();
+  const { handleChange: updateCreds, handleRemove:updateDocs , handleback, cred } = useCred()
+
+  const removeCred = async () => {
+    handleback()
+    // updateCreds?.({ ...(cred || {}), ["repoName"]: String("") });
+    // updateCreds?.({ ...(cred || {}), ["workflowId"]: String("") });
+  };
+
+  useEffect(() => {
+    removeCred()
+  }, []);
 
   const workflow = (
     <a href="https://github.com/Utkarshbhimte/obsidian-grab/blob/main/.github/workflows/main.yml">

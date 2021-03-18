@@ -10,9 +10,12 @@ import Header from "./Header";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import { getSyncStorage, removeSyncStorage } from "../utils/sync-storage";
+// import { getSyncStorage, removeSyncStorage } from "../utils/sync-storage";
 import MainPage from "../pages/MainPage";
 import Alert from "@material-ui/lab/Alert";
+import { AppCredentials, useCred } from "../utils/useToken";
+import { uid } from "../../background_script/firebase";
+// import { CredContext } from "../Context/credContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,36 +67,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddNote = ({ Bname, repoName, workflowId }) => {
+
+
+const AddNote = () => {
+  
+  const { handleChange: updateCreds, handleRemove, handleback , handleReset , cred } = useCred();
+  
   const classes = useStyles();
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
     "idle"
   );
-  // const [state, setState] = React.useState<{ id: number; name: string }>({
-  //   id: 0,
-  //   name: "",
-  // });
   const [state, setState] = React.useState({
     checkedB: true,
   });
   const [main, setmain] = useState<boolean>(false);
-  const [alert, setAlert] = useState<boolean>(false);
   const [textValue, setTextValue] = useState("");
   const [UrlValue, setUrlValue] = useState("");
   const [url, setUrl] = useState<any | null>(null);
   const [length, setLength] = useState<boolean>(true);
 
-  const getttingCredentials = async () => {
-    const token = await getSyncStorage("AccessToken");
-    const repoName = await getSyncStorage("repoName");
-    const workflowId = await getSyncStorage("workflowId");
-    console.log(token.AccessToken);
-    console.log(repoName.repoName);
-    console.log(workflowId.workflowId);
-  };
-
   useEffect(() => {
-    getttingCredentials();
+    console.log(uid);
+    
     const queryInfo = { active: true, lastFocusedWindow: true };
     chrome.tabs &&
       chrome.tabs.query(queryInfo, (tabs) => {
@@ -107,10 +102,8 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
     try {
       setFormState("loading");
       await pushContent({
-        data: textValue || UrlValue,
-        id: workflowId,
-        repoName,
-        Bname,
+        data: `${textValue} " " ${UrlValue}`,
+        ...(cred as AppCredentials)
       });
     } catch (error) {
       console.error(error);
@@ -131,40 +124,29 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
     setTextValue(e.target.value);
   };
 
-  const S = () => {
-    // setTextValue(url);
-    setAlert(true);
-    setUrlValue(url);
-    setLength(false);
-  };
-
   const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //  if
+    //  if
     if (event.target.checked === true) {
       setUrlValue(url);
       setLength(!event.target.checked);
     }
     // if Url is checked
     if (event.target.checked === false) {
-      setUrlValue("")
+      setUrlValue("");
       if (textValue.length > 0) {
-        
-      setLength(event.target.checked);
-        
+        setLength(event.target.checked);
       } else {
         setLength(!event.target.checked);
       }
     }
-    setAlert(event.target.checked);
     setState({ ...state, [event.target.name]: event.target.checked });
   };
 
   const removeCred = async () => {
-    await removeSyncStorage("repoName");
-    await removeSyncStorage("workflowId");
-    await removeSyncStorage("Bname");
+    handleback()
     setmain(true);
   };
+  
 
   return (
     <div>
@@ -176,7 +158,7 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
           {formState !== "done" && (
             <form onSubmit={handleSubmit}>
               <div className={classes.field}>
-                <h4>Add a note</h4>
+                  <h4>Add a note to {cred?.repoName}</h4>
                 <TextareaAutosize
                   aria-label="minimum height"
                   rowsMin={3}
@@ -186,17 +168,7 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
                 />
                 {formState === "idle" && (
                   <div>
-                    {!alert ? (
-                        <div>
-                      </div>
-                    ) : (
-                      <div>
-                        <Alert onClose={() => setAlert(false)}>
-                          Url Added Successfully
-                        </Alert>
-                      </div>
-                      )}
-                      <FormGroup row>
+                    <FormGroup row>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -248,9 +220,11 @@ const AddNote = ({ Bname, repoName, workflowId }) => {
             </div>
           )}
         </div>
-      )}
+       )} 
     </div>
   );
 };
 
 export default AddNote;
+
+

@@ -1,20 +1,11 @@
-import { getSyncStorage } from "./sync-storage";
+import { AppCredentials } from "./useToken";
 
-export const pushContent = async (args : { data : string , id :number , repoName:string , Bname:string}) => {
-  const raw = JSON.stringify({"ref":args.Bname , "inputs":{"data" : args.data}})
-  const TOKO = await getSyncStorage("AccessToken")
-    console.log("Token" , TOKO);
-  const token = TOKO.AccessToken
-  console.log("PushContent" , token);
+export const pushContent = async (args: AppCredentials & { data: string }) => {
   
-  // const repoName = localStorage.getItem("repoName")
-  // console.log("PushContent" , repoName);
-  const repoName = args.repoName
-  const workflowId = args.id
-  console.log("PushContent" , workflowId);
+  const raw = JSON.stringify({"ref":args.branch , "inputs":{"data" : args.data}})
   
   const myHeaders = new Headers();
-    myHeaders.append("authorization", `Bearer ${token}`);
+    myHeaders.append("authorization", `Bearer ${args.token}`);
     myHeaders.append("Content-Type", "application/json");
 
   const requestOptions = {
@@ -23,6 +14,6 @@ export const pushContent = async (args : { data : string , id :number , repoName
     body: raw,
   };
   
-  return fetch(`https://api.github.com/repos/${repoName}/actions/workflows/${workflowId}/dispatches`, requestOptions)
+  return fetch(`https://api.github.com/repos/${args.repoName}/actions/workflows/${args.workflowId}/dispatches`, requestOptions)
 
 }
