@@ -84,6 +84,8 @@ const checkStorage = async () => {
       
   }
   const handleChange = async (newCred: Partial<AppCredentials>) => {
+    // console.log("HandleChange" , JSON.stringify(newCred));
+    
     await setSyncStorage(STORAGE_KEY, JSON.stringify(newCred));
     databaseRef.ref('users/' + auth.currentUser?.uid).set( (newCred) )
     setCred(newCred)
@@ -100,11 +102,11 @@ const checkStorage = async () => {
   }
 
   const handleback = async () => {
-    console.log("HandleBack is being called");
-    setCred({token:cred.token , branch:"" , workflowId:"" , repoName:""})
-    await setSyncStorage(STORAGE_KEY, JSON.stringify(cred));
-    const data = await getSyncStorage([STORAGE_KEY])
-    console.log("credentials changed", data)
+    const newCred = { token: cred.token, branch: "", repoName: "", workflowId: "" }
+    console.log(JSON.stringify(newCred));
+    await setSyncStorage(STORAGE_KEY, JSON.stringify(newCred));
+    setCred(newCred)
+    console.log("HandleChange" , JSON.stringify(cred));
   }
 
   const handlebackonWorkflow = async () => {
