@@ -96,12 +96,12 @@ const checkStorage = async () => {
 
   const handleSave = () => {
     console.log("HandleSave is being callewd");
-    
     setCred({...cred , token:""})
   }
 
   const handleback = async () => {
-    setCred({ ...cred , repoName:"" , branch:"" , workflowId:""})
+    console.log("HandleBack is being called");
+    setCred({token:cred.token , branch:"" , workflowId:"" , repoName:""})
     await setSyncStorage(STORAGE_KEY, JSON.stringify(cred));
     const data = await getSyncStorage([STORAGE_KEY])
     console.log("credentials changed", data)
@@ -109,7 +109,6 @@ const checkStorage = async () => {
 
   const handlebackonWorkflow = async () => {
     console.log("Handle on workflow is being called");
-    
     setCred({ ...cred, branch: "", workflowId: "" })
     await setSyncStorage(STORAGE_KEY, JSON.stringify(cred));
   }

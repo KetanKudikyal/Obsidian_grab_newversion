@@ -25,11 +25,6 @@ const Main = () => {
   } = useCred();
 
 
-  const handleUserID = () => {
-    console.log("handleUsrId" , auth.currentUser?.uid);
-    updateCreds?.({ ...(cred || {}), ["UserId"]: String(auth.currentUser?.uid) })
-  }
-
   
   React.useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -47,13 +42,6 @@ const Main = () => {
     return <WelcomeScreen />;
   }
 
-
-  // console.log("firebaseData" , data.UserId);
-  // console.log("firebaseData" , data.token);
-  // console.log("firebaseData" , data.repoName);
-  // console.log("firebaseData" , data.branch);
-  // console.log("firebaseData" , data.workflowId);
-  
   const local =
     cred?.workflowId?.length && cred?.repoName?.length && cred.branch?.length;
   

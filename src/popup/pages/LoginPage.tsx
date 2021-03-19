@@ -8,7 +8,6 @@ import { AppCredentials, useCred } from "../utils/useToken";
 const useStyles = makeStyles((theme) => ({
   container: {
     display: "grid",
-    // placeItems: "center",
     height: "100vh",
   },
   button: {

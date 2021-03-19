@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AddNote = () => {
   
-  const {  cred  , handleback} = useCred();
+  const {  cred  , handleback , handleChange:updateCreds} = useCred();
   
   const classes = useStyles();
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
@@ -136,8 +136,10 @@ const AddNote = () => {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
 
+
   const removeCred = () => {
-    // handleback()
+    // updateCreds?.({ ...(cred || {}), ["repoName"]: String("") });
+    handleback()
     setmain(true);
   };
   
