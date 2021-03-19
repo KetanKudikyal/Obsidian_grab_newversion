@@ -4,10 +4,9 @@ import { auth, databaseRef } from "../../background_script/firebase";
 import { getSyncStorage, setSyncStorage, removeSyncStorage , Reset} from "./storage";
 
 const STORAGE_KEY = 'GITHUB_KEY'
-
+//  // "content_security_policy": "script-src  https://apis.google.com​",
 export interface AppCredentials {
   token: string;
-  UserId: string;
   repoName: string;
   workflowId: string;
   branch: string;
@@ -30,10 +29,9 @@ export const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     checkStorage();
     Checkfirebase();
-    // handleRemove()
   }, []);
 
-  const checkStorage = async () => {
+const checkStorage = async () => {
     const result = await getSyncStorage([STORAGE_KEY]);
     console.log(result);
     
@@ -94,6 +92,12 @@ export const AuthProvider: React.FC = ({ children }) => {
     setCred({})
   };
 
+  const handleSave = () => {
+    console.log("HandleSave is being callewd");
+    
+    setCred({...cred , token:""})
+  }
+
   const handleback = async () => {
     setCred({ ...cred , repoName:"" , branch:"" , workflowId:""})
     await setSyncStorage(STORAGE_KEY, JSON.stringify(cred));
@@ -102,7 +106,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   }
 
   
-  return <CredentialContext.Provider value={{ cred, handleChange , handleback , handleRemove }}> {children} </CredentialContext.Provider>
+  return <CredentialContext.Provider value={{ cred, handleChange ,handleSave, handleback , checkStorage , handleRemove }}> {children} </CredentialContext.Provider>
 }
 
 

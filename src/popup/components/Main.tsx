@@ -20,6 +20,7 @@ const Main = () => {
   const {
     handleChange: updateCreds,
     handleRemove: updateDocs,
+    checkStorage
     cred,
   } = useCred();
 

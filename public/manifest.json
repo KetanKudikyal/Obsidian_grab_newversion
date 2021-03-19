@@ -28,7 +28,8 @@
       "build/background_script.js"
     ]
   },
-  "content_security_policy": "script-src  https://apis.google.com​",
+ 
+  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
   "permissions": [
     "tabs",
     "activeTab",

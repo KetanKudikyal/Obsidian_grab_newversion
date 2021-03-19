@@ -58,6 +58,7 @@ const MainPage = () => {
   const [branch, setBranch] = useState<[]>([]);
   const {
     handleChange: updateCreds,
+    handleSave,
     handleRemove,
     handleback,
     cred,
@@ -95,7 +96,7 @@ const MainPage = () => {
     // .catch(function(error) {
     //   console.log("Remove failed: " + error.message)
     // });
-    handleRemove();
+    handleSave()
     auth.signOut();
   };
 
@@ -109,7 +110,16 @@ const MainPage = () => {
   };
 
   useEffect(() => {
-    handleback();
+    // if (
+    //   cred?.branch?.length &&
+    //   cred?.repoName?.length &&
+    //   cred?.workflowId?.length == 0
+    // ) {
+    //   console.log(cred?.branch?.length);
+      
+      
+    // }
+    // handleback();
     fetchRepos();
   }, []);
 

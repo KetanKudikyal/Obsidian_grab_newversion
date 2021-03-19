@@ -5,14 +5,15 @@ import Main from "./components/Main"
 import { useCred } from './utils/useToken';
 
 const App = () => {
-  const { handleChange: updateCreds, cred } = useCred()
+    
+  const { handleChange: updateCreds,   checkStorage , cred } = useCred()
   console.log("App " , cred);
   
 
   
   React.useEffect(() => {
 
-
+    checkStorage()
     // CredRef.on('value', (snapshot) => {
     //   const data = snapshot.val();
     //   console.log("firebasefromApp" , data);

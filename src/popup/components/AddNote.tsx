@@ -136,8 +136,8 @@ const AddNote = () => {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
 
-  const removeCred = async () => {
-    handleback()
+  const removeCred = () => {
+    // handleback()
     setmain(true);
   };
   
