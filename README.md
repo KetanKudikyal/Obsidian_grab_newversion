@@ -1,48 +1,44 @@
-# Chrome Extension TypeScript React Starter Kit
+# OBSIDIAN GRAB - Chrome Extension
 
-Chrome Extension Starter Kit, for TypeScript and React.
+Do Add the below Script while Creating a Workflow to enable Obsidian Grab
 
-## What is new
-Forked from [chibat's original starter kit](https://github.com/chibat/chrome-extension-typescript-starter), this kit essentially adds *React* support for **popup** and **options** windows.
 
-Plus a bunch of other improvements like source mapping and a better build setup!
+# This is a basic workflow to help you get started with Actions
 
----
+name: CI
 
-## Includes the following
-- TypeScript
-- React
-- Webpack
-- TSLint
-- Moment.js
-- jQuery
+# Controls when the action will run. 
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      data:
+        description: 'Content that needs to be added to your obsidian'
+        required: true
+        default: 'Test Content'
 
-## Project Structure
-- `src`: TypeScript source files
-- `public`: Chrome Extension manifest, icon, HTMLs
-- `dist`: This is where the Chrome Extension will be built
-  - `dist/build`: Generated JavaScript bundles with source mapping, and assets
 
-## Development build
-Runs webpack in watch mode, generates bundles with source mapping
-```
-npm start
-```
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  add_content:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
 
-## Production build
-Runs webpack and generates the minified bundles
-```
-npm run build
-```
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
 
-## Load extension to chrome
-- Build the extension
-- Open Chrome and go to `chrome://extensions`
-- Click `Load unpacked extension...`
-- Load the `dist` directory
-
-## Debugging your extension
-- Click on the icon of your extension opens the **popup** window
-- Right click and open DevTools
-- In DevTools you can press Ctrl+R to reload
-- Because source maps are generated, you can easily debug your ts code in DevTools
+      # Runs a set of commands using the runners shell
+      - name: Add data and commit # transfer the new html files back into the repository
+        run: |
+          echo "- ${{ github.event.inputs.data }}" >> "Quick Capture.md"
+          git config --local user.name "Obsidian Chrome Extension"
+          git add .
+          git commit -m "Adding data from the extension"   
+      - name: Push changes # push the output folder to your repo
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
