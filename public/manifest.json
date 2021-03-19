@@ -11,17 +11,6 @@
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "build/common_for_scripts.js",
-        "build/content_script.js"
-      ]
-    }
-  ],
   "background": {
     "scripts": [
       "build/common_for_scripts.js",
@@ -29,7 +18,8 @@
     ]
   },
  
-  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
+ "content_security_policy": "script-src  https://apis.google.com​",
+
   "permissions": [
     "tabs",
     "activeTab",

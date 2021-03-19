@@ -61,6 +61,7 @@ const MainPage = () => {
     handleSave,
     handleRemove,
     handleback,
+    handlebackonWorkflow,
     cred,
   } = useCred();
 
@@ -110,16 +111,6 @@ const MainPage = () => {
   };
 
   useEffect(() => {
-    // if (
-    //   cred?.branch?.length &&
-    //   cred?.repoName?.length &&
-    //   cred?.workflowId?.length == 0
-    // ) {
-    //   console.log(cred?.branch?.length);
-      
-      
-    // }
-    // handleback();
     fetchRepos();
   }, []);
 

@@ -18,6 +18,8 @@ export interface CredentialState {
   handleback : () => void
   handleRemove: () => void
   setCred: () => void
+  handleSave:() => void
+  handlebackonWorkflow : () => void
   handleReset : (keys:any) =>void
 }
 
@@ -105,8 +107,14 @@ const checkStorage = async () => {
     console.log("credentials changed", data)
   }
 
+  const handlebackonWorkflow = async () => {
+    console.log("Handle on workflow is being called");
+    
+    setCred({ ...cred, branch: "", workflowId: "" })
+    await setSyncStorage(STORAGE_KEY, JSON.stringify(cred));
+  }
   
-  return <CredentialContext.Provider value={{ cred, handleChange ,handleSave, handleback , checkStorage , handleRemove }}> {children} </CredentialContext.Provider>
+  return <CredentialContext.Provider value={{ cred, handleChange ,handleSave,  handlebackonWorkflow , handleback , checkStorage , handleRemove }}> {children} </CredentialContext.Provider>
 }
 
 
