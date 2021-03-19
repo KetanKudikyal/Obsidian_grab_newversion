@@ -5,14 +5,13 @@ import { useCred } from './utils/useToken';
 
 const App = () => {
     
-  const { handleChange: updateCreds,   checkStorage , cred } = useCred()
+  const { handleChange: updateCreds,   checkStorage:localStorage , cred } = useCred()
   console.log("App " , cred);
   
 
   
   React.useEffect(() => {
-
-    checkStorage()
+    localStorage?.call
     databaseRef.ref('/users/' + auth.currentUser?.uid).on('value', (snapshot) => {
       const data = snapshot.val();
       console.log("firebasefromApp" , data);

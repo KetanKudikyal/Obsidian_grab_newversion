@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AddNote = () => {
   
-  const {  cred  , handleback , handleChange:updateCreds} = useCred();
+  const {  cred  , handleback:resetCred, handleChange:updateCreds} = useCred();
   
   const classes = useStyles();
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
@@ -110,12 +110,12 @@ const AddNote = () => {
     setFormState("idle");
   };
 
-  const handleChange = (e) => {
-    if (e.target.value.length > 0) {
+  const handleChange = (event:any) => {
+    if (event.target.value.length > 0) {
       setLength(false);
     }
-    console.log(e.target.value);
-    setTextValue(e.target.value);
+    console.log(event.target.value);
+    setTextValue(event.target.value);
   };
 
   const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,9 +137,8 @@ const AddNote = () => {
   };
 
 
-  const removeCred = () => {
-    // updateCreds?.({ ...(cred || {}), ["repoName"]: String("") });
-    handleback()
+  const removeCred = async () => {
+    resetCred?.()
     setmain(true);
   };
   

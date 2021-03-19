@@ -28,7 +28,6 @@ const Header = () => {
         <div className={classes.appHeader}>
           <h1>Obsidian Grab</h1>
           <GitHubIcon style={{ fontSize: 60 }} />
-          {/* <img src="https://img.icons8.com/material-sharp/48/000000/github.png" className={classes.appLogo} alt="logo" /> */}
         </div>
       </div>
   )

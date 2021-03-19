@@ -18,7 +18,8 @@ export interface CredentialState {
   handleback : () => void
   handleRemove: () => void
   setCred: () => void
-  handleSave:() => void
+  handleSave: () => void
+  checkStorage: () => void
   handlebackonWorkflow : () => void
   handleReset : (keys:any) =>void
 }
@@ -102,10 +103,15 @@ const checkStorage = async () => {
   }
 
   const handleback = async () => {
+    console.log("function is being called");
+    
     const newCred = { token: cred.token, branch: "", repoName: "", workflowId: "" }
     console.log(JSON.stringify(newCred));
     await setSyncStorage(STORAGE_KEY, JSON.stringify(newCred));
-    setCred(newCred)
+    setTimeout(() => {
+      setCred(newCred)
+    }, 50);
+    
     console.log("HandleChange" , JSON.stringify(cred));
   }
 

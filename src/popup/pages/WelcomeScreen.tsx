@@ -7,8 +7,14 @@ const loading = require('../../../public/loading.gif')
 const WelcomeScreen = () => {
 
   return (
-    <div style={{margin:"auto" , width:"40%" , top:"25px"}}>
-      <img src={loading}/>
+    <div style={{margin:"auto" , top:"25px" }}>
+      <img style={{
+        width: "50%",
+        height: "50%",
+        position: "absolute",
+        top:"20%",
+                left:"25%",
+                objectFit:"contain" }} src={loading}/>
     </div>
   )
 }
