@@ -10,12 +10,8 @@ import Header from "./Header";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-// import { getSyncStorage, removeSyncStorage } from "../utils/sync-storage";
 import MainPage from "../pages/MainPage";
-import Alert from "@material-ui/lab/Alert";
 import { AppCredentials, useCred } from "../utils/useToken";
-import { uid } from "../../background_script/firebase";
-// import { CredContext } from "../Context/credContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AddNote = () => {
   
-  const { handleChange: updateCreds, handleRemove, handleback , handleReset , cred } = useCred();
+  const {  cred  , handleback} = useCred();
   
   const classes = useStyles();
   const [formState, setFormState] = useState<"loading" | "idle" | "done">(
@@ -87,8 +83,6 @@ const AddNote = () => {
   const [length, setLength] = useState<boolean>(true);
 
   useEffect(() => {
-    console.log(uid);
-    
     const queryInfo = { active: true, lastFocusedWindow: true };
     chrome.tabs &&
       chrome.tabs.query(queryInfo, (tabs) => {

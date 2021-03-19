@@ -1,6 +1,6 @@
 import * as React from "react"
   import { useState, useEffect, createContext, useContext } from "react"
-import { auth, CredRef, databaseRef } from "../../background_script/firebase";
+import { auth, databaseRef } from "../../background_script/firebase";
 import { getSyncStorage, setSyncStorage, removeSyncStorage , Reset} from "./storage";
 
 const STORAGE_KEY = 'GITHUB_KEY'

@@ -6,7 +6,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { AppCredentials, useCred } from "../utils/useToken";
-import Alert from "@material-ui/lab/Alert";
 import AddNote from "./AddNote";
 
 const useStyles = makeStyles((theme) => ({
@@ -53,55 +52,41 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Workflow = (props: {
-  workflows: any;
-  branch: Array<>;
-}) => {
+const Workflow = (props: { workflows: any; branch: String[] }) => {
   const classes = useStyles();
   const WorkflowData = props.workflows;
+  console.log("workflowsData", WorkflowData);
+
   const Branches = props.branch;
   const [workflowList, setworkflowList] = useState<boolean>(true);
-  const [ disable , setDisable] = useState<boolean>(true)
-  const [state, setState] = React.useState<{ id: number; name: string }>({
-    id: 0,
-    name: "",
-  });
+  const [disable, setDisable] = useState<boolean>(true);
   const [Bname, setBname] = React.useState<string>("");
-  const [alert, setAlert] = React.useState<boolean>(false);
+  const [ID, setID] = React.useState<string>("");
   const { handleChange: updateCreds, cred } = useCred();
-  const repoName = cred?.repoName;
-  
-  const handleChangeSelectWorkflow = async (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>,
-    key: keyof AppCredentials
-  ) => {
-    const name = event.target.name as keyof typeof state;
-    console.log("WorkflowName", name);
-    setState({
-      ...state,
-      [name]: event.target.value,
-    });
-    updateCreds?.({ ...(cred || {}), [key]: String(event.target.value) });
-    setDisable(false)
-  };
 
-  const handleChangeBranch = async (
+  const handleChangeSelectWorkflow = async (
+    event: React.ChangeEvent<{value: unknown }>,key: keyof AppCredentials) => {
+    const wid = event.target.value as string ;
+    setID(wid)
+    updateCreds?.({ ...(cred || {}), [key]: String(event.target.value) });
+    setDisable(false);
+  };
+  
+  const handleChangeSelectBranch = async (
     event: React.ChangeEvent<{ value: unknown }>,
     key: keyof AppCredentials
   ) => {
     setBname(event.target.value as string);
     updateCreds?.({ ...(cred || {}), [key]: String(event.target.value) });
-    if (state.id && event.target.value) {
+    if (ID && event.target.value) {
       setworkflowList(false);
     } else {
-      setAlert(true)
-      setState({id: 0 , name :""})
-      setBname('')
+      setID("")
+      setBname("");
       setworkflowList(true);
     }
   };
 
-  
   return (
     <div>
       {workflowList ? (
@@ -110,50 +95,37 @@ const Workflow = (props: {
             <h4>Choose your workflow</h4>
             <FormControl variant="filled" className={classes.formControl}>
               <InputLabel id="demo-simple-select-filled-label">
-                Workflows
+                workflows
               </InputLabel>
               <Select
                 labelId="demo-simple-select-filled-label"
                 id="demo-simple-select-filled"
-                value={state}
-                onChange={(e) => handleChangeSelectWorkflow(e, "workflowId")}
-                inputProps={{
-                  name: "id",
-                  id: "demo-simple-select-filled-label",
-                }}
+                value={ID}
+                onChange={(e) => handleChangeSelectWorkflow(e, 'workflowId')}
               >
-                {WorkflowData.map((w: any) => (
-                  <MenuItem value={w.id} key={w.id}>
-                    {w.name}
+                {WorkflowData.map((value:any) => (
+                  <MenuItem value={value.id} key={value.id}>
+                    {value.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </div>
-          {!alert ? (
-            <div></div>
-          ) : (
-            <div className={classes.field}>
-              <Alert severity="warning" onClose={() => setAlert(false)}>
-                Please Select Workflow 
-              </Alert>
-            </div>
-          )}
           <div className={classes.field}>
             <h4>Choose your Branch</h4>
-            <FormControl disabled={disable} variant="filled" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-filled-label">
-                Branch
+            <FormControl variant="filled" disabled={disable} className={classes.formControl}>
+              <InputLabel id="simple-select-filled-label">
+                branches
               </InputLabel>
               <Select
-                labelId="demo-simple-select-filled-label"
-                id="demo-simple-select-filled"
+                labelId="simple-select-filled-label"
+                id="simple-select-filled"
                 value={Bname}
-                onChange={(e) => handleChangeBranch(e, "branch")}
+                onChange={(e) => handleChangeSelectBranch(e, 'branch')}
               >
-                {Branches.map((b: any) => (
-                  <MenuItem key={b.id} value={b.name}>
-                    {b.name}
+                {Branches.map((value:any) => (
+                  <MenuItem value={value.name} key={value.name}>
+                    {value.name}
                   </MenuItem>
                 ))}
               </Select>

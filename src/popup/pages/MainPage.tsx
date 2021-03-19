@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import WorkflowPage from "../components/Workflow";
-import { auth, CredRef, databaseRef, uid } from "../../background_script/firebase";
+import { auth } from "../../background_script/firebase";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import NoWorkFlow from "./NoWorkFlow";
@@ -12,8 +12,6 @@ import { AppCredentials, useCred } from "../utils/useToken";
 import { getWorkflows } from "../utils/getWorkflows";
 import PowerSettingsNewIcon from "@material-ui/icons/PowerSettingsNew";
 import { getrepos } from "../utils/getrepos";
-
-
 
 const useStyles = makeStyles({
   root: {
@@ -52,22 +50,25 @@ const useStyles = makeStyles({
 });
 
 const MainPage = () => {
-  
   const classes = useStyles();
   const [Workflow, setWorkflow] = useState<boolean>(false);
   const [repoNames, setrepoNames] = useState<[]>([]);
   const [WorkflowStatus, setWorkflowStatus] = useState<boolean>(true);
   const [WorkflowList, setWorkflowList] = useState<[]>([]);
   const [branch, setBranch] = useState<[]>([]);
-  const { handleChange: updateCreds, handleRemove, handleback, cred } = useCred()
- 
+  const {
+    handleChange: updateCreds,
+    handleRemove,
+    handleback,
+    cred,
+  } = useCred();
+
   const valueRef = useRef("");
-  
 
   const sendValue = async (key: keyof AppCredentials) => {
     const name = valueRef.current.value;
-    updateCreds?.({ ...(cred || {}), [key]: String(name) })
-    const token = cred?.token
+    updateCreds?.({ ...(cred || {}), [key]: String(name) });
+    const token = cred?.token;
     // GettingWorkflows
     const data = await getWorkflows(name, String(token));
     const workflow = data.workflows.map((workflow: any) => {
@@ -86,7 +87,6 @@ const MainPage = () => {
     setBranch(BranchData);
   };
 
-
   const handleRemoveonLogout = async () => {
     // databaseRef.remove()
     // .then(function() {
@@ -95,34 +95,29 @@ const MainPage = () => {
     // .catch(function(error) {
     //   console.log("Remove failed: " + error.message)
     // });
-    handleRemove()
+    handleRemove();
     auth.signOut();
   };
 
- 
-
   const fetchRepos = async () => {
-    const repoData = await getrepos(String(cred?.token))
+    const repoData = await getrepos(String(cred?.token));
     // const data = await repoData.json();
     const Repos = repoData.map((reponame: any) => {
       return reponame.full_name;
     });
-    setrepoNames(Repos)
-  }
+    setrepoNames(Repos);
+  };
 
   useEffect(() => {
-    handleback()
-   fetchRepos()
-  }, [])
+    handleback();
+    fetchRepos();
+  }, []);
 
   return (
     <div className={classes.root}>
       {Workflow ? (
         WorkflowStatus ? (
-          <WorkflowPage
-            workflows={WorkflowList}
-            branch={branch}
-          />
+          <WorkflowPage workflows={WorkflowList} branch={branch} />
         ) : (
           <NoWorkFlow />
         )
@@ -162,5 +157,3 @@ const MainPage = () => {
 };
 
 export default MainPage;
-
-
