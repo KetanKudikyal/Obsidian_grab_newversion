@@ -47,26 +47,24 @@ const LoginPage = () => {
   const [user, setuser] = React.useState<any>();
 
   const signInwithGithub = async (key: keyof AppCredentials) => {
-    auth.signInWithPopup(provider).then(async (result) => {
-      var Credential = result.credential as firebase.auth.OAuthCredential;
-      var user = result.user;
-      // console.log(user);
-      setuser(user)
-      var tokenfromfirebase: string = Credential.accessToken || "";
-      updateCreds?.({ ...(cred || {}), [key]: String(tokenfromfirebase) });
-    });
+    auth
+      .signInWithPopup(provider)
+      .then(async (result) => {
+        console.log(result);
+        var Credential = result.credential as firebase.auth.OAuthCredential;
+        var user = result.user;
+        // console.log(user);
+        setuser(user);
+        var tokenfromfirebase: string = Credential.accessToken || "";
+        updateCreds?.({ ...(cred || {}), [key]: String(tokenfromfirebase) });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
- 
-
-  React.useEffect(() => {
-
-    console.log(user);
-  }, []);
-
-  
   const classes = useStyles();
-
+  // "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
   return (
     <div>
       <div className={classes.app}>

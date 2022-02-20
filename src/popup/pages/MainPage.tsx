@@ -59,9 +59,6 @@ const MainPage = () => {
   const {
     handleChange: updateCreds,
     handleSave,
-    handleRemove,
-    handleback,
-    handlebackonWorkflow,
     cred,
   } = useCred();
 

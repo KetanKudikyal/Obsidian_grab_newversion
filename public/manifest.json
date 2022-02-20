@@ -12,18 +12,10 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": [
-      "build/common_for_scripts.js",
-      "build/background_script.js"
-    ]
+    "scripts": ["build/common_for_scripts.js", "build/background_script.js"]
   },
- 
- "content_security_policy": "script-src  https://apis.google.com​",
 
-  "permissions": [
-    "tabs",
-    "activeTab",
-    "storage",
-    "<all_urls>"
-  ]
+  "content_security_policy": "script-src 'self' https://fonts.gstatic.com https://apis.google.com https://www.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://my-project.firebaseapp.com; object-src 'self'",
+
+  "permissions": ["tabs", "activeTab", "storage", "<all_urls>"]
 }
